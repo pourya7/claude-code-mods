@@ -1,0 +1,25 @@
+{
+  "name": "respawn",
+  "version": "0.1.0",
+  "description": "Auto-continue after a turn dies on a network or API error: an 8-bit CONTINUE? countdown with backoff and 3 lives per hour.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "lives": {
+      "type": "number",
+      "title": "Lives per hour",
+      "description": "How many automatic continues respawn may spend in any rolling hour. When they run out the band shows GAME OVER and respawn waits for you.",
+      "default": 3
+    },
+    "prompt": {
+      "type": "string",
+      "title": "Continue prompt",
+      "description": "The words respawn submits when the countdown ends. Empty means \"continue\".",
+      "default": "continue"
+    }
+  }
+}
