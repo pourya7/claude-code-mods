@@ -1,0 +1,36 @@
+{
+  "name": "party",
+  "version": "0.1.0",
+  "description": "A raid frame for every live session on the machine: who is working, who is waiting on you and for how long, per-PR locks so two sessions never act on one PR, and /broadcast to the rest of the party.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "sessions",
+    "parallel",
+    "worktrees",
+    "locks",
+    "mod"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "nagMinutes": {
+      "type": "number",
+      "title": "Nag after (minutes)",
+      "description": "How long another session may wait on you before its bar turns red and party toasts once.",
+      "default": 5,
+      "min": 1,
+      "max": 240
+    },
+    "lockMinutes": {
+      "type": "number",
+      "title": "PR lock window (minutes)",
+      "description": "A PR another live session merged, closed, commented on, reviewed or edited within this window turns the same action here into a permission prompt.",
+      "default": 10,
+      "min": 1,
+      "max": 240
+    }
+  }
+}
