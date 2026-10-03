@@ -1,0 +1,64 @@
+{
+  "name": "tracer",
+  "version": "0.1.0",
+  "description": "Merged is not deployed: follow a merged PR or commit through its workflow runs, deployments and an optional live URL with gh, on a pixel-art level map, and wake the session once when it is live or a stage fails.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "deploy",
+    "ci",
+    "github",
+    "release",
+    "mod"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "intervalSeconds": {
+      "type": "number",
+      "title": "Poll interval (seconds)",
+      "description": "How often tracer polls workflow runs, deployments and the live URL.",
+      "default": 60,
+      "min": 15,
+      "max": 3600
+    },
+    "timeoutMinutes": {
+      "type": "number",
+      "title": "Give up after (minutes)",
+      "description": "Stop following a commit this long after /trace, with a TIME UP toast.",
+      "default": 120,
+      "min": 1,
+      "max": 1440
+    },
+    "environments": {
+      "type": "string",
+      "title": "Deploy environments",
+      "description": "Comma-separated GitHub deployment environments to wait for, in order (e.g. staging, production). Empty: follow whatever deployments appear, and if none do, BUILD is the final stage.",
+      "default": ""
+    },
+    "liveUrl": {
+      "type": "string",
+      "title": "Live URL",
+      "description": "Optional URL to fetch once the deploys are done; {sha} and {short} are filled in. The chain is LIVE when the body contains the SHA (full or 7-character).",
+      "default": ""
+    },
+    "liveMatch": {
+      "type": "string",
+      "title": "Live match",
+      "description": "Optional text the live body must contain instead of the SHA; {sha} and {short} are filled in.",
+      "default": ""
+    },
+    "wake": {
+      "type": "string",
+      "title": "Wake the session",
+      "description": "final: submit one line when the chain reaches its last stage or a stage fails. never: only toast and redraw.",
+      "default": "final",
+      "options": [
+        "final",
+        "never"
+      ]
+    }
+  }
+}
