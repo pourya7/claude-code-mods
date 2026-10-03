@@ -1,0 +1,43 @@
+{
+  "name": "dock",
+  "version": "0.1.0",
+  "description": "Container stacks per worktree: a pixel-art pane of every compose stack with its memory and worktree, orphans whose worktree is gone, and a guard that asks before booting another stack when memory headroom is low.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mods",
+    "docker",
+    "compose",
+    "worktree",
+    "memory",
+    "pixel-art"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "intervalSeconds": {
+      "type": "number",
+      "title": "Pane refresh (seconds)",
+      "description": "How often the /dock pane reads docker again while it is open. Nothing is read while it is closed.",
+      "default": 30,
+      "min": 5,
+      "max": 3600
+    },
+    "guard": {
+      "type": "boolean",
+      "title": "Guard stack boots",
+      "description": "Before a Bash `docker compose up` or `docker-compose up`, read docker and ask first when the memory headroom is below the minimum.",
+      "default": true
+    },
+    "minHeadroomGiB": {
+      "type": "number",
+      "title": "Minimum headroom (GiB)",
+      "description": "Free engine memory, in GiB, below which the guard asks before another stack boots.",
+      "default": 3,
+      "min": 0,
+      "max": 1024
+    }
+  }
+}
