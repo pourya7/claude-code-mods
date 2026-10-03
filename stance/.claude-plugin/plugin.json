@@ -1,0 +1,31 @@
+{
+  "name": "stance",
+  "version": "0.1.0",
+  "description": "Session modes that are enforced, not requested: investigate, draft, build, ship. Denies the tool calls a stance rules out, auto-switches on phrases like \"no code\", and shows an 8-bit class badge above the prompt.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mods",
+    "modes",
+    "guardrails",
+    "8-bit"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "autoDetect": {
+      "type": "boolean",
+      "title": "Auto-detect stance",
+      "description": "Switch stance when a prompt says things like \"no code\", \"findings only\" or \"draft only\".",
+      "default": true
+    },
+    "showBuild": {
+      "type": "boolean",
+      "title": "Show band in build",
+      "description": "Show the stance band above the prompt in the default build stance too.",
+      "default": false
+    }
+  }
+}
