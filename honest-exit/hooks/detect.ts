@@ -64,9 +64,15 @@ export const FILTERS = ['head', 'tail', 'tee', 'grep', 'egrep', 'fgrep'] as cons
 const SIGNATURES: { pattern: RegExp; clue: (hit: RegExpExecArray) => string; isStrong: boolean }[] = [
   { pattern: /\bFAILED\b/, clue: () => 'FAILED', isStrong: true },
   { pattern: /\b([1-9]\d*) failing\b/, clue: hit => `${hit[1]} failing`, isStrong: true },
+  // node --test's summary (`ℹ fail 1`, `# fail 1` under TAP) and its `✖ failing tests:` list.
+  { pattern: /^[ℹ#] fail ([1-9]\d*)$/m, clue: hit => `fail ${hit[1]}`, isStrong: true },
+  { pattern: /\bfailing tests:/, clue: () => 'failing tests:', isStrong: true },
   { pattern: /(?<!\b0 )\bfailed\b/, clue: () => 'failed', isStrong: false },
-  { pattern: /Error:/, clue: () => 'Error:', isStrong: false },
-  { pattern: /✗/, clue: () => '✗', isStrong: false },
+  // `Error:`, `TypeError:`, `AssertionError [ERR_ASSERTION]:`.
+  { pattern: /\w*Error(?: \[[A-Z_]+\])?:/, clue: hit => hit[0], isStrong: false },
+  // The tail of a Node AssertionError dump, all a short `tail` may show of it.
+  { pattern: /^\s+operator: '\w+',?$/m, clue: hit => hit[0].trim().replace(/,$/, ''), isStrong: false },
+  { pattern: /[✗✖]/, clue: hit => hit[0], isStrong: false },
   { pattern: /^Traceback \(most recent call last\)/m, clue: () => 'Traceback', isStrong: true },
 ]
 

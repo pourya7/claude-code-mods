@@ -80,7 +80,7 @@ const LEAD = /^(?:[A-Za-z_]\w*=\S*\s+)*(?:(?:time|env|npx|bunx|uv run|poetry run
 const commandWords = (simple: string): string => maskQuoted(simple.trim()).replace(LEAD, '')
 
 const CHECK_COMMAND =
-  /^(?:pytest|jest|vitest|mocha|tsc|eslint|ruff|mypy|pyright|rspec|phpunit|go (?:test|build|vet)|cargo (?:test|build|check|clippy)|(?:npm|pnpm|yarn|bun)(?: run)? (?:test|lint|build|typecheck|check)|make|gradle|\.\/gradlew|mvn|dotnet (?:test|build))(?=[\s:]|$)/
+  /^(?:pytest|jest|vitest|mocha|tsc|eslint|ruff|mypy|pyright|rspec|phpunit|go (?:test|build|vet)|cargo (?:test|build|check|clippy)|(?:npm|pnpm|yarn|bun)(?: run)? (?:test|lint|build|typecheck|check)|node --test|make|gradle|\.\/gradlew|mvn|dotnet (?:test|build))(?=[\s:]|$)/
 
 /** A test, lint or build command, judged by its first word(s), not by a word anywhere in it. */
 export const isCheckCommand = (simple: string): boolean => CHECK_COMMAND.test(commandWords(simple))

@@ -9,6 +9,51 @@ import {
   swallowsStatus,
 } from '../hooks/detect'
 
+// `npm test` in demos/project under node v24, with one assertion changed to fail.
+const NODE_FAIL = `> cart@1.0.0 test
+> node --test
+
+✔ subtotal adds price times quantity (0.390375ms)
+✖ applyDiscount takes a percentage off (0.2925ms)
+✔ total applies the discount to the subtotal (0.041042ms)
+ℹ tests 3
+ℹ pass 2
+ℹ fail 1
+ℹ duration_ms 32.348667
+
+✖ failing tests:
+
+test at test/cart.test.js:14:1
+✖ applyDiscount takes a percentage off (0.2925ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  630 !== 631
+
+      at TestContext.<anonymous> (test/cart.test.js:15:10) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 630,
+    expected: 631,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }`
+
+// The same run, passing.
+const NODE_PASS = `> cart@1.0.0 test
+> node --test
+
+✔ subtotal adds price times quantity (0.366208ms)
+✔ applyDiscount takes a percentage off (0.05275ms)
+✔ total applies the discount to the subtotal (0.038375ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 32.343542`
+
 describe('no matches found', () => {
   test('zsh "no matches found" gives the glob', () => {
     expect(noMatchClue('zsh: no matches found: src/**/*.tsx')).toBe('src/**/*.tsx')
@@ -154,6 +199,33 @@ describe('hidden exit status', () => {
     expect(hiddenExitClue('./run.sh FAILED | tail', 'FAILED', false)).toBeUndefined()
     expect(hiddenExitClue('pytest | grep FAILED', 'FAILED tests/a.py::t', false)).toBe('FAILED')
     expect(hiddenExitClue('CI=1 npx jest 2>&1 | head', 'Error: boom', false)).toBe('Error:')
+  })
+
+  test('Node\'s built-in test runner (node --test) failing behind a pipe', () => {
+    const cases: [string, string][] = [
+      ['✖ applyDiscount takes a percentage off (0.29ms)', '✖'],
+      ['ℹ pass 2\nℹ fail 1', 'fail 1'],
+      ['# pass 2\n# fail 3', 'fail 3'],
+      ['  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:', 'AssertionError [ERR_ASSERTION]:'],
+      ['  TypeError: x is not a function', 'TypeError:'],
+      // All that `npm test 2>&1 | tail -5` shows of the failure: the end of the AssertionError dump.
+      ["    actual: 630,\n    expected: 631,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }", "operator: 'strictEqual'"],
+    ]
+    for (const [output, clue] of cases) {
+      expect(hiddenExitClue('npm test 2>&1 | tail -5', output, false)).toBe(clue)
+      expect(hiddenExitClue('node --test | tail', output, false)).toBe(clue)
+    }
+    expect(hiddenExitClue('npm test 2>&1 | tail -40', NODE_FAIL, false)).toBe('✖')
+    // A script that runs the tests under another name still gets the summary lines.
+    expect(hiddenExitClue('./run-tests.sh | tail', '✖ failing tests:', false)).toBe('failing tests:')
+    expect(hiddenExitClue('./run-tests.sh | tail', 'ℹ tests 3\nℹ fail 1', false)).toBe('fail 1')
+  })
+
+  test('a passing node --test run, with its "fail 0" summary, means no note', () => {
+    expect(hiddenExitClue('npm test 2>&1 | tail -20', NODE_PASS, false)).toBeUndefined()
+    expect(hiddenExitClue('node --test | tail', NODE_PASS, false)).toBeUndefined()
+    expect(hiddenExitClue('./run-tests.sh | tail', NODE_PASS, false)).toBeUndefined()
+    expect(hiddenExitClue('node --test --test-reporter=tap | tail', '# pass 3\n# fail 0\n# cancelled 0', false)).toBeUndefined()
   })
 
   test('detect explains the pipeline hid the first command\'s status', () => {
