@@ -333,3 +333,109 @@ export const register: Register = (on, options) => {
 2. **Commits and PRs.** `SPEC.md` and `tasks/plan.md` are committed. The first wave lands as a PR from `feat/first-wave` for review rather than straight onto `main`.
 3. **CI.** There is none yet. Whether `claude plugin test` runs in GitHub Actions without auth is unverified.
 4. **Screenshots.** The first wave ships text captures. Real screenshots come later.
+
+---
+
+# Wave 2
+
+Same stack, commands, structure, 8-bit style guide, code style, testing strategy and boundaries as wave 1 (above). Each mod ships in its own PR containing only its folder; one integration PR then adds the marketplace entries and README rows.
+
+## Evidence (aggregate)
+
+| Pain | Evidence | Mod |
+|---|---|---|
+| The right memory isn't salient at the moment it matters | ≥11 mistakes recurred after being written down; ~2.7k tokens of memory index loaded into every session regardless of relevance | radar |
+| Compaction loses the plot | 91 compactions; summaries rewritten by hand; "is now a safe time to compact?" asked repeatedly | quicksave |
+| Parallel sessions block on you and collide | up to 5–10 sessions at once; ~190 h of sessions waiting on a human answer; two sessions acted on the same PR | party |
+| Checks that pass without checking | 64 memory notes are verification traps: zero-iteration gates, no-op "proofs", tests that pass with the fix removed | prove-it |
+| One agent's word isn't enough | ~1,600 second-model review runs typed or scripted by hand before PRs | co-op |
+| The shell lies quietly | 186 zsh "no matches found" (the command never ran); exit codes hidden by pipes; `exit=$?` echoed ~1,000× | honest-exit |
+| Local stacks eat the laptop | 10 parallel container stacks crashed a machine; orphaned stacks from deleted worktrees | dock |
+| Merged ≠ deployed | "merged but I still can't see it" in 34 prompts across 14 sessions | tracer |
+| MCP calls fail on argument shapes | ~65 schema errors (unknown keys, `"true"` for `true`, numbers as strings) | mender |
+
+## Capability map (wave 2)
+
+All independent; none imports another or a wave-1 mod.
+
+| Module id | Responsibility | Signature colour |
+|---|---|---|
+| `radar` | Surface the relevant memory at the tool call that needs it | lavender |
+| `quicksave` | Save task state before compaction, restore it after | green |
+| `party` | One view of every live session on the machine; who is blocked on you; per-PR locks | pink |
+| `prove-it` | A new test must fail with the fix reverted before push / PR | red |
+| `co-op` | Second-model review gate on PR creation | blue |
+| `honest-exit` | Make silent shell failures loud | peach |
+| `dock` | Container stacks per worktree: memory headroom, orphans, guarded boot | navy + blue |
+| `tracer` | Follow a merged commit until it is deployed (and optionally live) | yellow |
+| `mender` | Fix malformed MCP arguments against the tool's own schema | brown + orange |
+
+Build order: all nine in parallel → integration.
+
+## Module specs (wave 2)
+
+### radar — memory at the moment it matters
+- Memory sources (`userConfig.memoryDirs`, default: the auto-memory directory from settings `autoMemoryDirectory` if set, else the project's `~/.claude/projects/<slug>/memory`): every `*.md` with frontmatter `name`/`description`; optional frontmatter `triggers:` (list of regexes) and lines in the body starting with or containing **never/always/don't/must** become the memory's *rules*.
+- Index on `session.start` and `/radar reload`; matching is deterministic: explicit `triggers` first, then keyword overlap between the tool input (Bash command, file path, URL, MCP tool name + args) and the memory's name/description tokens (stop-words removed, ≥2 distinctive tokens or one trigger hit).
+- On a match (main loop and subagents), the call runs (`await next(e)`) and the memory's description + rule lines are attached as `context` (model-only). At most 2 memories per call; the same memory is not re-attached within the same turn.
+- UI: toast `RADAR ▸ <memory name>`; `/radar` pane: lavender radar-sweep sprite, recent pings (time, tool, memory), memory count; status `RADAR 274 ◉ 3 PINGS`.
+- Never edits memory files. Acceptance: trigger regex hit attaches; keyword overlap attaches; unrelated call attaches nothing; dedup per turn; cap of 2; malformed frontmatter skipped with one toast.
+
+### quicksave — a save point before compaction
+- On `session.compact` (any trigger) and on `/quicksave`, before compaction proceeds: `$.model.fork` asks for a structured save — goal, current step, working directory/branch, open PRs/tickets/links mentioned, decisions made, rules the user set in this session, next step — as JSON; written to `$.store` keyed by session id (last 5 slots) and mirrored to `<session cwd>/.claude/quicksave/<session-id>.md` only when `userConfig.writeFile` is on (default off).
+- After compaction completes, the save is appended to the conversation (`$.session.append`, user-role note) so the model continues from it. `/quickload [slot]` re-injects manually; `/quicksave list` shows slots.
+- Save-point band: when context usage ≥ `userConfig.warnAtPercent` (default 70) **and** the session is idle (no turn running, no background tasks), show a green `SAVE POINT ▸ safe to /compact` band with `[ SAVE ]` and `[ SAVE + COMPACT ]` buttons.
+- If the fork fails (`isAnswered: false`), compaction is not blocked: a toast says the save failed. Acceptance: compaction triggers a save then a re-inject; fork failure doesn't block; slots capped; band shows only when idle and above threshold.
+
+### party — the raid frame for your sessions
+- Every session heartbeats into `$.store` (per-session key) every 15 s and on turn start/end and question/permission waits: session id, title, cwd, branch, state (`working` | `waiting-on-you` | `idle` | `done`), since, last tool. Entries older than 2 min are stale and dropped from views.
+- `waiting-on-you` = a question/plan/permission prompt is pending (detect via the events the API exposes; if only partially detectable, document it).
+- `/party` pane: raid-frame rows with a pixel class icon per state, HP-style bar for time waiting (fills red after `userConfig.nagMinutes`, default 5), cwd basename, branch. Status: `PARTY 4 ▸ 1 WAITING`. Toast once when another session has waited longer than `nagMinutes`.
+- Locks: when a tool call targets a PR (`gh pr merge|close|comment|review|edit <n>` or a PR URL), record `{repo, pr, session, at}`; if another live session touched the same PR in the last `userConfig.lockMinutes` (default 10), turn the call into an ask (`tool.check`) naming the other session.
+- `/broadcast <text>` sends the text to every other live session via `$.session.send` where the API allows; otherwise documents the limitation and copies to clipboard.
+- Acceptance: heartbeat/stale handling; state transitions; lock → ask; no lock for the same session; broadcast skips self.
+
+### prove-it — the fix must make a test fail first
+- Config: `userConfig.testCommand` (e.g. `npm test --`, `pytest`), `userConfig.sourceGlobs` / `testGlobs` (defaults: tests = `**/*.test.*`, `**/*_test.*`, `**/test_*.py`, `tests/**`; source = everything else tracked).
+- `/prove` (and, when `userConfig.gate` is on, intercepting `git push` / `gh pr create`): determine the change vs the merge base (`git diff --name-only <base>`), split into source vs test files, then: copy changed source files aside to the OS temp dir, restore their base versions (`git show <base>:<path>`), run the test command on the changed test files, **require a failure**, restore the copies, verify the restore by hash, run the tests again and require a pass.
+- Never uses `git stash`/`git checkout --`; restore happens in a `finally` path even on error; if the restore hash mismatches, stop and tell the user where the copies are.
+- Verdict band: `PROVEN ★` (fails without, passes with), `NOT PROVEN` (passes without the fix → the tests don't test the fix), `BROKEN` (fails with the fix). With the gate on, `NOT PROVEN`/`BROKEN` deny the push/PR with the reason; `/prove skip` allows the next one.
+- Acceptance: each verdict; restore verified even when the test command errors; no-tests-changed reported; gate deny/skip.
+
+### co-op — a second player reviews before the PR
+- On `gh pr create` (and `/coop`): collect `git diff <base>...HEAD` (truncated to `userConfig.maxDiffKb`, default 200), send it to a reviewer, parse findings, and gate.
+- Reviewer: default `$.model.complete` with `userConfig.model` (default a different model family tier than the session if available, else the session model) and a strict review prompt returning JSON `{verdict: "pass"|"fail", findings:[{severity,file,line,summary}]}`. Optional `userConfig.command`: a user-supplied CLI (argv, diff on stdin) whose stdout is parsed the same way — the README must state this sends the diff to whatever that command talks to.
+- Gate: `fail` with any high finding → deny `gh pr create` with the findings as text; findings are also attached as `context`. `/coop skip` allows the next create. After fixes, the next create re-runs the review.
+- UI: blue `2P REVIEW` band with findings count by severity, `[ VIEW ]` opens a pane listing findings; status `CO-OP ▸ PASS`.
+- Acceptance: pass lets through; fail denies with findings; unparsable reviewer output fails open with a toast (never blocks forever); skip; truncation noted.
+
+### honest-exit — loud shell failures
+- After every Bash result (main + subagents), detect and attach a model-visible `context` note (and a toast) for:
+  - zsh `no matches found` / bash `No match` → "the glob didn't match, so the command never ran".
+  - `command not found` for a name the user aliases interactively (`cp`, `rm`, `mv`, `grep`, `ls` heuristics) → note that agent shells may differ.
+  - Exit 0 whose output contains failure signatures (`FAILED`, `failed`, `Error:`, `✗`, `N failing`, `Traceback`) **and** the command pipes into `head`/`tail`/`tee`/`grep` or ends in `|| true` → "the pipeline hid the exit status of the first command".
+- Optional rewrites (`userConfig.rewrite`, default off): quote unquoted glob words in `--include=*.x`-style flags; prefix `set -o pipefail;` when the command pipes a test/lint/build command into `head`/`tail`.
+- UI: peach `HONEST EXIT` toast + status counter `EXIT ▸ 3 CAUGHT`. Acceptance: each detector with positive and negative cases; rewrite off by default; rewrite idempotent.
+
+### dock — container stacks per worktree
+- `/dock` pane (refresh on open and every `userConfig.intervalSeconds`, default 30, only while open): via `$.process.run` with `docker`: compose projects (`docker compose ls --all --format json`), per-container memory (`docker stats --no-stream --format json`), total engine memory (`docker info --format json`), each project's working dir (compose label `com.docker.compose.project.working_dir`).
+- Rows: project, worktree path (or `ORPHAN` when the working dir no longer exists), state, memory bar; header: total used / engine total as an 8-bit fuel gauge, headroom in GiB.
+- Guard (`userConfig.guard`, default on): on Bash `docker compose up` / `docker-compose up`, if headroom < `userConfig.minHeadroomGiB` (default 3) → ask, naming the biggest stacks. Never stops or removes anything itself; pane buttons `[ DOWN ]` put the exact `docker compose -p <name> down` command into the reply/clipboard for the user.
+- No docker / daemon down → pane says so. Acceptance: orphan detection; headroom math; guard ask only below threshold; no destructive call anywhere in the code.
+
+### tracer — merged is not deployed
+- `/trace <pr | sha>`: resolve the merge commit (via `gh pr view --json mergeCommit`), then poll every `userConfig.intervalSeconds` (default 60) with `gh api`: workflow runs for that SHA (`actions/runs?head_sha=`), deployments for that SHA (`deployments?sha=`) and their latest statuses; optional `userConfig.liveUrl` (with `{sha}` placeholder) fetched with `$.http.fetch`, live when the body contains the SHA (or `userConfig.liveMatch`).
+- Chain shown as an 8-bit level map: `MERGED ▸ BUILD ▸ DEPLOY:<env> ▸ LIVE`, each node ● pending / ★ done / ✕ failed.
+- Wakes the session (`$.prompt.submit`) once when the chain reaches LIVE (or the last known stage) or any stage fails (`userConfig.wake`: `final` | `never`). Stops polling after done/failed or `userConfig.timeoutMinutes` (default 120).
+- Acceptance: stage progression; failure wakes once; timeout; no deployments configured → BUILD is the final stage and README says so.
+
+### mender — fix the arguments, not the model
+- For MCP tool calls (`mcp__*`), validate the input against the tool's own input schema (from `$.tool.list` / the call envelope) and repair known-safe mistakes before the call: drop unknown properties when the schema forbids them, coerce `"true"`/`"false"` → booleans, numeric strings → numbers, single value → `[value]` when an array is expected, JSON strings → objects when an object is expected. Each repair is listed in a model-visible `context` note so the model learns the right shape.
+- If a call still errors with a schema/validation message, record `{tool, error}`; `/mender` pane lists repairs and recurring errors per tool.
+- Connector down (error text indicates disconnected/unauthenticated server): toast `MENDER ▸ <server> DOWN` once and attach a note to stop retrying until the user reconnects.
+- Never invents values or changes a value that already satisfies the schema. Acceptance: each coercion with schema; no-op on valid input; unknown-key drop only when `additionalProperties: false`; repair notes; down detection.
+
+## Wave 2 success criteria
+1. Each of the nine mods: `claude plugin validate` clean, `claude plugin test` 0 failures on terminal and desktop, README with permissions table, merged via its own PR.
+2. Integration PR: marketplace lists 15 mods and validates; README tables updated; `scripts/check.sh` ALL CLEAR on `main`.
+3. Privacy: no employer or job detail and no secrets in any file or commit (swept before every push).
