@@ -36,6 +36,7 @@ describe('addPipefail', () => {
     expect(addPipefail('pytest -q | tail -5')).toBe('set -o pipefail; pytest -q | tail -5')
     expect(addPipefail('npm run lint 2>&1 | tail -40')).toBe('set -o pipefail; npm run lint 2>&1 | tail -40')
     expect(addPipefail('cargo build | tail')).toBe('set -o pipefail; cargo build | tail')
+    expect(addPipefail('node --test 2>&1 | tail -5')).toBe('set -o pipefail; node --test 2>&1 | tail -5')
   })
 
   test('leaves other pipelines alone', () => {
