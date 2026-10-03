@@ -12,7 +12,7 @@
     "worktree",
     "git",
     "guardrails",
-    "8-bit"
+    "pixel-art"
   ],
   "types": "./types/index.d.ts",
   "userConfig": {

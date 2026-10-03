@@ -52,7 +52,7 @@ When both kinds match, the stricter stance (investigate) wins. Auto-detect only 
 | `autoDetect` | `true` | Switches stance when a prompt uses one of the phrases above. |
 | `showBuild` | `false` | Shows the band in `build` too. By default the band hides in `build`. |
 
-## The 8-bit band
+## The band
 
 The band sits above the prompt: the class badge in half-block pixels, the stance name in its colour (investigate blue, draft yellow, build orange, ship lime), a one-line rule, and buttons that switch on click. With the band focused (ctrl+x tab), the hotkeys `i`, `d`, `b` and `s` press them. The band hides in `build` and while a survey is showing. In VS Code and `claude -p`, where no band draws, the status line reads `STANCE ▶ INVESTIGATE` and `/stance` answers in text.
 

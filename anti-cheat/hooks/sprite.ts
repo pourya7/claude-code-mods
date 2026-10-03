@@ -1,4 +1,4 @@
-/** The PICO-8 palette: the only colours the 8-bit family draws with. */
+/** The PICO-8 palette: the only colours these mods draw with. */
 export const PICO8 = {
   black: '#000000',
   navy: '#1D2B53',

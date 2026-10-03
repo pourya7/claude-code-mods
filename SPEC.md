@@ -8,7 +8,7 @@ A public library of [Claude Code mods](https://code.claude.com/docs/en/plugins/m
 
 **Users:** developers who run Claude Code for long stretches, often several sessions in parallel, across git worktrees, with CI and PR review loops, and who keep correcting the same mistakes.
 
-**Success:** someone can run `/plugin marketplace add pourya7/claude-code-mods`, install any one mod, and immediately get a guardrail or a removed chore. Each mod passes `claude plugin validate` and `claude plugin test`, and looks like part of one 8-bit family.
+**Success:** someone can run `/plugin marketplace add pourya7/claude-code-mods`, install any one mod, and immediately get a guardrail or a removed chore. Each mod passes `claude plugin validate` and `claude plugin test`, and looks like part of one pixel-art family.
 
 ### Evidence (aggregate numbers; quote freely, no employer specifics)
 
@@ -27,7 +27,7 @@ Each mod is an independent plugin: no mod imports another, and each folder is in
 
 | Module id | Responsibility | Depends on |
 |---|---|---|
-| `marketplace` | Root `.claude-plugin/marketplace.json`, README, LICENSE, tsconfig, `scripts/check.sh`, shared 8-bit style guide (this spec) | — |
+| `marketplace` | Root `.claude-plugin/marketplace.json`, README, LICENSE, tsconfig, `scripts/check.sh`, shared visual style guide (this spec) | — |
 | `anchor` | Pin a session to its git worktree | marketplace |
 | `tripwire` | Turn written rules into enforced deny/ask/rewrite/note checks on tool calls | marketplace |
 | `sentry` | Watch PRs outside the model and wake the session only when something actionable happens | marketplace |
@@ -64,13 +64,15 @@ claude --plugin-dir <mod>             # load one mod from source for a session
 <mod>/hooks/*.ts                  → pure helpers (parsing, matching), unit-testable
 <mod>/types/index.d.ts            → PluginState contract (only if the mod uses $.state)
 <mod>/tests/*.test.ts             → claude plugin test suites
-<mod>/README.md                   → what/why (one evidence line), install, commands, config, 8-bit preview, permissions table
+<mod>/README.md                   → what/why (one evidence line), install, commands, config, pixel-art preview, permissions table
 scripts/check.sh                  → CI-style check over all mods
 tsconfig.json                     → editor/tsc config (jsxFactory h), includes types/ and */hooks, */tests
 types/                            → git-ignored engine declarations from /plugin-types
 ```
 
-## 8-bit style guide (shared by every mod)
+## Visual style guide (shared by every mod)
+
+In any text (READMEs, descriptions, keywords, comments, test names), call the look "pixel art" or nothing at all; the art speaks for itself.
 
 The mods should look like one arcade family.
 
@@ -132,7 +134,7 @@ The mods should look like one arcade family.
   - `field`: which input field to test. The default is the whole input JSON.
   - `action` is one of `deny | ask | rewrite | note`.
 - **Enforcement.** Matching rules apply in file order, on every tool call, subagents included.
-  - `deny` returns `{ deny }` with a red 8-bit "TRAP SPRUNG" message that includes the id, message and cite.
+  - `deny` returns `{ deny }` with a red pixel-art "TRAP SPRUNG" message that includes the id, message and cite.
   - `ask` forces a permission prompt through `tool.check`.
   - `rewrite` applies a regex replace to the field via `next`.
   - `note` lets the call run and attaches the message as `context` the model reads.
@@ -239,7 +241,7 @@ The mods should look like one arcade family.
   - `CI green/passing/all checks pass`
   - `verified/confirmed it works`
 - **Flagging.**
-  - Each unverified claim produces a lime/red 8-bit referee band: `⚑ FOUL: "tests pass" — no test ran after the last edit`.
+  - Each unverified claim produces a lime/red pixel-art referee band: `⚑ FOUL: "tests pass" — no test ran after the last edit`.
   - The band has buttons **Challenge** and **OK**. Challenge submits `$.prompt.submit("anti-cheat: you said <claim> but <reason>. Run the check now and report the real result.")`; OK dismisses.
   - The mod also appends a system notice (`$.session.append`, type `system`) so the foul stays in the transcript.
   - `userConfig.mode` is `flag` (default) or `challenge`, which auto-submits the challenge.
@@ -324,7 +326,7 @@ export const register: Register = (on, options) => {
 1. `scripts/check.sh` exits 0: all six mods validate clean and every test passes on terminal and desktop.
 2. `/plugin marketplace add pourya7/claude-code-mods` lists six mods. Each installs alone and loads (`/plugin` shows it active).
 3. Every acceptance bullet above has at least one test.
-4. Each mod README has a text capture of its 8-bit UI, commands, config and permissions. The root README has the banner, thesis, evidence table, install steps and mod table.
+4. Each mod README has a text capture of its pixel-art UI, commands, config and permissions. The root README has the banner, thesis, evidence table, install steps and mod table.
 5. No employer-specific strings in the repo (checked with grep before push).
 
 ## Open questions (assumed; correct later)
@@ -338,7 +340,7 @@ export const register: Register = (on, options) => {
 
 # Wave 2
 
-Same stack, commands, structure, 8-bit style guide, code style, testing strategy and boundaries as wave 1 (above). Each mod ships in its own PR containing only its folder; one integration PR then adds the marketplace entries and README rows.
+Same stack, commands, structure, visual style guide, code style, testing strategy and boundaries as wave 1 (above). Each mod ships in its own PR containing only its folder; one integration PR then adds the marketplace entries and README rows.
 
 ## Evidence (aggregate)
 
@@ -419,13 +421,13 @@ Build order: all nine in parallel → integration.
 
 ### dock — container stacks per worktree
 - `/dock` pane (refresh on open and every `userConfig.intervalSeconds`, default 30, only while open): via `$.process.run` with `docker`: compose projects (`docker compose ls --all --format json`), per-container memory (`docker stats --no-stream --format json`), total engine memory (`docker info --format json`), each project's working dir (compose label `com.docker.compose.project.working_dir`).
-- Rows: project, worktree path (or `ORPHAN` when the working dir no longer exists), state, memory bar; header: total used / engine total as an 8-bit fuel gauge, headroom in GiB.
+- Rows: project, worktree path (or `ORPHAN` when the working dir no longer exists), state, memory bar; header: total used / engine total as a pixel-art fuel gauge, headroom in GiB.
 - Guard (`userConfig.guard`, default on): on Bash `docker compose up` / `docker-compose up`, if headroom < `userConfig.minHeadroomGiB` (default 3) → ask, naming the biggest stacks. Never stops or removes anything itself; pane buttons `[ DOWN ]` put the exact `docker compose -p <name> down` command into the reply/clipboard for the user.
 - No docker / daemon down → pane says so. Acceptance: orphan detection; headroom math; guard ask only below threshold; no destructive call anywhere in the code.
 
 ### tracer — merged is not deployed
 - `/trace <pr | sha>`: resolve the merge commit (via `gh pr view --json mergeCommit`), then poll every `userConfig.intervalSeconds` (default 60) with `gh api`: workflow runs for that SHA (`actions/runs?head_sha=`), deployments for that SHA (`deployments?sha=`) and their latest statuses; optional `userConfig.liveUrl` (with `{sha}` placeholder) fetched with `$.http.fetch`, live when the body contains the SHA (or `userConfig.liveMatch`).
-- Chain shown as an 8-bit level map: `MERGED ▸ BUILD ▸ DEPLOY:<env> ▸ LIVE`, each node ● pending / ★ done / ✕ failed.
+- Chain shown as a pixel-art level map: `MERGED ▸ BUILD ▸ DEPLOY:<env> ▸ LIVE`, each node ● pending / ★ done / ✕ failed.
 - Wakes the session (`$.prompt.submit`) once when the chain reaches LIVE (or the last known stage) or any stage fails (`userConfig.wake`: `final` | `never`). Stops polling after done/failed or `userConfig.timeoutMinutes` (default 120).
 - Acceptance: stage progression; failure wakes once; timeout; no deployments configured → BUILD is the final stage and README says so.
 

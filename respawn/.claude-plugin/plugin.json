@@ -1,7 +1,7 @@
 {
   "name": "respawn",
   "version": "0.1.0",
-  "description": "Auto-continue after a turn dies on a network or API error: an 8-bit CONTINUE? countdown with backoff and 3 lives per hour.",
+  "description": "Auto-continue after a turn dies on a network or API error: a pixel-art CONTINUE? countdown with backoff and 3 lives per hour.",
   "author": {
     "name": "Pourya",
     "url": "https://github.com/pourya7"

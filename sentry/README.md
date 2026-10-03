@@ -84,7 +84,7 @@ The mod never throws.
 | `intervalSeconds` | `60` | Seconds between polls (15–3600). |
 | `wake` | `actionable` | `actionable`: submit the wake prompt on an actionable transition. `never`: toast and redraw only, never submit a prompt. |
 
-## The 8-bit UI
+## The UI
 
 The pane (`/watch`) shows a pixel watchtower. Its beacon takes the colour of the worst PR state:
 

@@ -38,7 +38,7 @@ anti-cheat is the referee. During each main-loop turn it logs every file edit an
 - Installing a tool is not running it: `npm install -D jest` and `pip install pytest mypy` are not checks.
 - An edit made by a subagent still counts as an edit. Only main-loop runs count as evidence. Subagent turns, aborted turns, turns that end on an error and refusals are never checked.
 
-## The 8-bit UI
+## The UI
 
 The referee band above the prompt shows up only after a foul. It clears when you press a button or when the next turn starts.
 

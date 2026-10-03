@@ -5,7 +5,7 @@
     "url": "https://github.com/pourya7"
   },
   "metadata": {
-    "description": "8-bit Claude Code mods for long, parallel, mostly unattended work: worktree pinning, enforced rules, PR watching without polling, enforced modes, claim checks and auto-continue."
+    "description": "Claude Code mods for long, parallel, mostly unattended work: worktree pinning, enforced rules, PR watching without polling, enforced modes, claim checks and auto-continue."
   },
   "plugins": [
     {
@@ -16,7 +16,7 @@
     {
       "name": "tripwire",
       "source": "./tripwire",
-      "description": "Rules that are enforced, not remembered: deny, ask, rewrite or note on any tool call, subagents included. An 8-bit trap for every mistake you already wrote down."
+      "description": "Rules that are enforced, not remembered: deny, ask, rewrite or note on any tool call, subagents included. A pixel-art trap for every mistake you already wrote down."
     },
     {
       "name": "sentry",
@@ -26,7 +26,7 @@
     {
       "name": "stance",
       "source": "./stance",
-      "description": "Session modes that are enforced, not requested: investigate, draft, build, ship. Denies the tool calls a stance rules out, auto-switches on phrases like \"no code\", and shows an 8-bit class badge above the prompt."
+      "description": "Session modes that are enforced, not requested: investigate, draft, build, ship. Denies the tool calls a stance rules out, auto-switches on phrases like \"no code\", and shows a pixel-art class badge above the prompt."
     },
     {
       "name": "anti-cheat",
@@ -36,7 +36,7 @@
     {
       "name": "respawn",
       "source": "./respawn",
-      "description": "Auto-continue after a turn dies on a network or API error: an 8-bit CONTINUE? countdown with backoff and 3 lives per hour."
+      "description": "Auto-continue after a turn dies on a network or API error: a pixel-art CONTINUE? countdown with backoff and 3 lives per hour."
     }
   ]
 }

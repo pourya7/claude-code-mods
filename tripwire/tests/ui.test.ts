@@ -171,7 +171,7 @@ describe('/tripwire add: the human arms', () => {
 
 describe('TRAP SPRUNG band', () => {
   for (const surface of SURFACES) {
-    test(`draws the red 8-bit trap with id, message and cite after a deny on ${surface}`, async ($, on) => {
+    test(`draws the red pixel-art trap with id, message and cite after a deny on ${surface}`, async ($, on) => {
       world(on, { [USER_FILE]: ruleFile(FORCE_RULE) })
       await $.session.start(START)
       await $.tool.call({ tool: 'Bash', command: 'git push --force' })

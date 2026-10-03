@@ -49,7 +49,7 @@ The band's buttons have hotkeys. Once the band has focus (ctrl+x tab or a click)
 
 You can change these in the `/config` menu, or under `pluginConfigs.respawn` in your settings.
 
-## The 8-bit UI
+## The UI
 
 The band above the prompt during a countdown. The second failure in a row has a 30s wait, with 27s left:
 
