@@ -1,0 +1,9 @@
+{
+  "name": "cart",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A tiny shopping cart, used as the sample project for the mod demos.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

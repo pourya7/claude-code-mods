@@ -7,6 +7,8 @@
         NO CLAIMS WITHOUT EVIDENCE
 ```
 
+![anti-cheat flagging an "all tests pass" claim with no test run](../assets/anti-cheat.gif)
+
 **The problem:** the model says "tests pass" or "CI green" after editing code without running anything again. In the study behind this library, 23% of 279 memory files were verification traps.
 
 anti-cheat is the referee. During each main-loop turn it logs every file edit and every check command (test, lint/typecheck, build, CI, push), with whether it passed. When the turn ends, it reads the answer for claims and checks each one against that log. A claim with nothing behind it gets a foul flag above the prompt and a notice in the transcript. The check is deterministic regex. There are no model calls.
