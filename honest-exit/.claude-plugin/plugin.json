@@ -1,0 +1,26 @@
+{
+  "name": "honest-exit",
+  "version": "0.1.0",
+  "description": "Make silent shell failures loud: a glob that matched nothing, a command missing from the agent's shell, or a pipe that hid a failing exit status gets a note the model reads and a peach pixel-art toast.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "shell",
+    "bash",
+    "zsh",
+    "exit-status",
+    "pixel-art"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "rewrite": {
+      "type": "boolean",
+      "title": "Rewrite risky commands",
+      "description": "Before a Bash call runs, quote unquoted globs in --flag=*.x arguments and prefix set -o pipefail when a test, lint or build command is piped into tail. The model is told about every rewrite. Off by default.",
+      "default": false
+    }
+  }
+}
