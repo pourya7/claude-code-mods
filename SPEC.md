@@ -330,6 +330,6 @@ export const register: Register = (on, options) => {
 ## Open questions (assumed; correct later)
 
 1. **License.** MIT is assumed.
-2. **Commits and PRs.** `SPEC.md` is committed. `tasks/` stays local. The first wave lands as a PR from `feat/first-wave` for review rather than straight onto `main`.
+2. **Commits and PRs.** `SPEC.md` and `tasks/plan.md` are committed. The first wave lands as a PR from `feat/first-wave` for review rather than straight onto `main`.
 3. **CI.** There is none yet. Whether `claude plugin test` runs in GitHub Actions without auth is unverified.
 4. **Screenshots.** The first wave ships text captures. Real screenshots come later.

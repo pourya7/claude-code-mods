@@ -7,5 +7,36 @@
   "metadata": {
     "description": "8-bit Claude Code mods for long, parallel, mostly unattended work: worktree pinning, enforced rules, PR watching without polling, enforced modes, claim checks and auto-continue."
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "anchor",
+      "source": "./anchor",
+      "description": "Pin a session to its git worktree: every Bash call runs from the anchor, and the primary checkout is guarded against stray edits and git writes."
+    },
+    {
+      "name": "tripwire",
+      "source": "./tripwire",
+      "description": "Rules that are enforced, not remembered: deny, ask, rewrite or note on any tool call, subagents included. An 8-bit trap for every mistake you already wrote down."
+    },
+    {
+      "name": "sentry",
+      "source": "./sentry",
+      "description": "Watch PRs outside the model: polls CI, reviews and threads with gh, wakes the session only when something actionable happens, and denies sleep-poll loops while it watches."
+    },
+    {
+      "name": "stance",
+      "source": "./stance",
+      "description": "Session modes that are enforced, not requested: investigate, draft, build, ship. Denies the tool calls a stance rules out, auto-switches on phrases like \"no code\", and shows an 8-bit class badge above the prompt."
+    },
+    {
+      "name": "anti-cheat",
+      "source": "./anti-cheat",
+      "description": "No claims without evidence: flags \"tests pass\", \"CI green\" and \"verified\" claims that nothing in the turn backs up."
+    },
+    {
+      "name": "respawn",
+      "source": "./respawn",
+      "description": "Auto-continue after a turn dies on a network or API error: an 8-bit CONTINUE? countdown with backoff and 3 lives per hour."
+    }
+  ]
 }
