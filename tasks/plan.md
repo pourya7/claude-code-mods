@@ -32,15 +32,15 @@ Parallel: T1–T6 are independent (separate folders, no shared code). T7 needs a
 
 Approach: one worktree + branch per mod (`.worktrees/<mod>`, `feat/<mod>`). Per mod: build test-first → two adversarial reviewers → fix → full check → privacy sweep → commit → push → PR → merge. Mod PRs touch only their folder, so they merge in any order without conflicts. Then one integration PR (marketplace, README, ignore engine-generated `*/tsconfig.json`).
 
-- [ ] W2-0 wave-2 spec + plan (this PR) — XS
-- [ ] W2-1 radar — M — blocked by W2-0
-- [ ] W2-2 quicksave — M — blocked by W2-0
-- [ ] W2-3 party — L — blocked by W2-0
-- [ ] W2-4 prove-it — L — blocked by W2-0
-- [ ] W2-5 co-op — M — blocked by W2-0
-- [ ] W2-6 honest-exit — S — blocked by W2-0
-- [ ] W2-7 dock — M — blocked by W2-0
+- [x] W2-0 wave-2 spec + plan (this PR) — XS
+- [x] W2-1 radar — M — blocked by W2-0
+- [x] W2-2 quicksave — M — blocked by W2-0
+- [x] W2-3 party — L — blocked by W2-0
+- [x] W2-4 prove-it — L — blocked by W2-0
+- [x] W2-5 co-op — M — blocked by W2-0
+- [x] W2-6 honest-exit — S — blocked by W2-0
+- [x] W2-7 dock — M — blocked by W2-0
 - [ ] W2-8 tracer — M — blocked by W2-0
-- [ ] W2-9 mender — M — blocked by W2-0
+- [x] W2-9 mender — M — blocked by W2-0
 - [ ] W2-10 integration PR — S — blocked by W2-1..9
   - Each W2-1..9 — Acceptance: SPEC.md › Wave 2 › that module's bullets. Verify: `claude plugin validate <mod> && claude plugin test <mod>`; PR merged.
