@@ -5,7 +5,7 @@
     "url": "https://github.com/pourya7"
   },
   "metadata": {
-    "description": "Claude Code mods for long, parallel, mostly unattended work: worktree pinning, enforced rules, PR watching without polling, enforced modes, claim checks and auto-continue."
+    "description": "Claude Code mods for long, parallel, mostly unattended work: worktree pinning, enforced rules, PR watching without polling, enforced modes, claim checks, auto-continue, memory at the tool call, save points before compaction, a view of every live session, proven fixes, second-model review, loud shell failures, container headroom and MCP argument repair."
   },
   "plugins": [
     {
@@ -37,6 +37,46 @@
       "name": "respawn",
       "source": "./respawn",
       "description": "Auto-continue after a turn dies on a network or API error: a pixel-art CONTINUE? countdown with backoff and 3 lives per hour."
+    },
+    {
+      "name": "radar",
+      "source": "./radar",
+      "description": "Memory at the moment it matters: when a tool call touches what one of your memory files is about, radar attaches that memory's description and rules for the model to read. A lavender pixel-art radar pings each match."
+    },
+    {
+      "name": "quicksave",
+      "source": "./quicksave",
+      "description": "A save point before compaction: the task's goal, step, branch, links, decisions, rules and next step are saved before /compact and handed back to the model after it, with a pixel-art SAVE POINT band when it is safe to compact."
+    },
+    {
+      "name": "party",
+      "source": "./party",
+      "description": "A raid frame for every live session on the machine: who is working, who is waiting on you and for how long, per-PR locks so two sessions never act on one PR, and /broadcast to the rest of the party."
+    },
+    {
+      "name": "prove-it",
+      "source": "./prove-it",
+      "description": "The fix must make a test fail first: reverts your source changes, runs the changed tests and requires a failure, restores (verified by hash) and requires a pass. Optional gate on git push and gh pr create."
+    },
+    {
+      "name": "co-op",
+      "source": "./co-op",
+      "description": "A second player reviews before the PR: gh pr create waits for a second-model review of the branch diff, and a failing review with a high finding blocks it."
+    },
+    {
+      "name": "honest-exit",
+      "source": "./honest-exit",
+      "description": "Make silent shell failures loud: a glob that matched nothing, a command missing from the agent's shell, or a pipe that hid a failing exit status gets a note the model reads and a peach pixel-art toast."
+    },
+    {
+      "name": "dock",
+      "source": "./dock",
+      "description": "Container stacks per worktree: a pixel-art pane of every compose stack with its memory and worktree, orphans whose worktree is gone, and a guard that asks before booting another stack when memory headroom is low."
+    },
+    {
+      "name": "mender",
+      "source": "./mender",
+      "description": "Fix the arguments, not the model: repairs malformed MCP tool arguments (\"true\" for true, numbers as strings, unknown keys) against the tool's schema before the call, tells the model what it fixed, and flags servers that are down. A pixel-art patch log."
     }
   ]
 }
