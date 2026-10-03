@@ -7,6 +7,8 @@
 ▄▄▄▀▀▀▀▀▀▀▄▄    RULES THAT ARE ENFORCED, NOT REMEMBERED
 ```
 
+![tripwire denying a git commit that skips hooks](../assets/tripwire.gif)
+
 **Memories are advice, mods are law.** A rule you wrote in `CLAUDE.md` or memory is something the model may forget. Tripwire checks it at the moment of the tool call, every call, subagents included.
 
 **The problem, in one line:** across 189 memory files there were 405 "never / don't" lines, and at least 11 mistakes were repeated *after* they had been written down.

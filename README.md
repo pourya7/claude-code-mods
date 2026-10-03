@@ -15,6 +15,8 @@
 >
 > A rule written in `CLAUDE.md` or memory is something the model may forget. A mod enforces it at the moment of the tool call.
 
+![tripwire, stance and anti-cheat in one Claude Code session](assets/hero.gif)
+
 ## Why
 
 Most published mods are dashboards, games or generic guards. These fifteen are mined from a study of the author's own **242 Claude Code sessions, 1,145 subagent runs and 279 memory files**. Each one targets a mistake that kept coming back:
@@ -70,6 +72,8 @@ Every mod is a standalone plugin. Install one, some or all; none depends on anot
 
 Requires **Claude Code 2.1.287 or later**.
 
+Adding the marketplace installs nothing. Pick only the mods you want; each one installs, disables and uninstalls on its own.
+
 ```
 /plugin marketplace add pourya7/claude-code-mods
 /plugin install anchor@claude-code-mods
@@ -92,6 +96,7 @@ claude --plugin-dir ./anchor
 scripts/check.sh                 # validate + test every mod; prints ALL CLEAR or FAILED
 claude plugin validate anchor    # one mod: manifest and module checks
 claude plugin test anchor        # one mod: runs anchor/tests/*.test.ts
+scripts/record.sh                # re-render the demo GIFs in assets/ (needs vhs and a signed-in claude)
 ```
 
 Editor typings for the mods API come from the engine itself. Run `/plugin-types types` inside Claude Code to write them to `types/`; they are git-ignored and not redistributed. [SPEC.md](SPEC.md) holds the design, the shared visual style guide and each mod's acceptance criteria.

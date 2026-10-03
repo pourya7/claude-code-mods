@@ -52,6 +52,7 @@ Each mod is an independent plugin: no mod imports another, and each folder insta
 | `dock` | Container stacks per worktree: memory headroom, orphans, guarded boot | navy + blue |
 | `tracer` | Follow a merged commit until it is deployed (and optionally live) | yellow |
 | `mender` | Fix malformed MCP arguments against the tool's own schema | brown + orange |
+| `demos` | Recorded README demos: a shared sample project, one VHS tape per mod, GIFs in `assets/`, `scripts/record.sh` | — |
 
 ## Tech stack
 
@@ -82,6 +83,12 @@ claude --plugin-dir <mod>             # load one mod from source for a session
 <mod>/tests/*.test.ts             → claude plugin test suites
 <mod>/README.md                   → what/why (one evidence line), install, commands, config, pixel-art preview, permissions table
 scripts/check.sh                  → CI-style check over all mods
+scripts/record.sh                 → re-render every demo GIF (or the ones named)
+demos/project/                    → the sample app every demo copies
+demos/setup.sh                    → copies the sample app to a neutral temp path and makes it a git repo with a worktree
+demos/tapes/<mod>.tape            → one VHS tape per mod, plus hero.tape
+demos/tapes/common.tape           → shared VHS settings: theme, font, size
+assets/<mod>.gif, assets/hero.gif → rendered demos, each under 5 MB
 tsconfig.json                     → editor/tsc config (jsxFactory h), includes types/ and */hooks, */tests
 types/                            → git-ignored engine declarations from /plugin-types
 ```
@@ -349,6 +356,27 @@ The mods should look like one arcade family.
 - Connector down (error text indicates disconnected/unauthenticated server): toast `MENDER ▸ <server> DOWN` once and attach a note to stop retrying until the user reconnects.
 - Never invents values or changes a value that already satisfies the schema. Acceptance: each coercion with schema; no-op on valid input; unknown-key drop only when `additionalProperties: false`; repair notes; down detection.
 
+## Demos
+
+Each mod README opens with a short recorded GIF of the mod working in a real Claude Code session. Demos are recorded with [VHS](https://github.com/charmbracelet/vhs) and can be re-rendered by anyone with VHS and a signed-in `claude`.
+
+- **Sample project.** `demos/project/` is a tiny Node app with no dependencies: a `cart.js` module, a `node --test` suite run by `npm test`, and a README. `demos/setup.sh` copies it to a neutral path under the temp dir, makes it a git repo committed as `Demo <demo@example.com>`, and adds a linked worktree, so every demo starts from the same clean state. Mod-specific files (such as a project `.claude/tripwire.json`) are written by the tape's hidden setup, not committed into the sample app.
+- **Session.** Every tape runs `claude --model haiku` (cheap and fast) with only the demoed mod loaded via `--plugin-dir`, the user's own settings, plugins and MCP servers left out (`--setting-sources project,local --strict-mcp-config`), and permissions preset so no prompt interrupts the run. The prompt is `$ `, and the trust dialog and environment setup happen off camera (`Hide`/`Show`).
+- **Look.** A dark theme taken from the author's terminal profile, in `demos/tapes/common.tape`, with JetBrains Mono. Width and frame rate are chosen so each GIF stays under 5 MB.
+- **Length.** Each demo runs under 30 seconds of playback.
+- **Scenarios.**
+  - `tripwire`: a project rule denies `git commit --no-verify`; the prompt asks for a commit that skips hooks, and the `TRAP SPRUNG` deny shows.
+  - `stance`: a prompt starting "No code, findings only" switches the stance to investigate (toast and badge band); an edit the model then attempts is refused with the stance message.
+  - `anti-cheat`: the prompt asks for a small edit and a "tests pass" reply without running anything; the `FOUL!` referee band shows.
+  - `hero`: one session with all three loaded, showing each in turn, for the root README.
+- **Mods that need real conditions** are not recorded yet. sentry and tracer need a PR with CI or a deploy and could be faked with a stub `gh` on `PATH`; dock needs Docker and could use a stub `docker`; respawn needs a dropped connection, which a recording cannot produce reliably. They are deferred.
+- **Privacy.** Recordings show only the neutral prompt, the temp-dir path and the demo user. No real names, accounts, hosts or home paths appear in any frame or tape.
+- **Acceptance.**
+  - `scripts/record.sh` renders every tape, or only the mods named as arguments, and fails if any GIF is 5 MB or more or a tape fails.
+  - Every GIF shows its mod's UI firing (band, toast or deny text) on a fresh run.
+  - Frames extracted from each GIF show no home path, username, email or account name.
+  - Each mod README embeds its GIF near the top; the root README embeds `assets/hero.gif`.
+
 ## Code style
 
 ```tsx
@@ -403,10 +431,10 @@ export const register: Register = (on, options) => {
 1. `scripts/check.sh` exits 0: every mod validates clean and every test passes on terminal and desktop.
 2. `/plugin marketplace add pourya7/claude-code-mods` lists every mod. Each installs alone and loads (`/plugin` shows it active).
 3. Every acceptance bullet above has at least one test.
-4. Each mod README has a text capture of its pixel-art UI, commands, config and permissions. The root README has the banner, thesis, evidence table, install steps and mod table.
+4. The recorded mods' READMEs open with their demo GIF, and the root README with the hero GIF. Each mod README has a text capture of its pixel-art UI, commands, config and permissions. The root README has the banner, thesis, evidence table, install steps and mod table.
 5. No secrets and no private data in any file or commit.
 
 ## Open questions
 
 1. **CI.** There is none yet. Whether `claude plugin test` runs in GitHub Actions without auth is unverified.
-2. **Screenshots.** READMEs ship text captures of each UI; real screenshots would help.
+2. **Demos for the rest.** Only tripwire, stance and anti-cheat have recorded demos so far.
