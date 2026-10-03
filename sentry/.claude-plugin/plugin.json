@@ -1,0 +1,38 @@
+{
+  "name": "sentry",
+  "version": "0.1.0",
+  "description": "Watch PRs outside the model: polls CI, reviews and threads with gh, wakes the session only when something actionable happens, and denies sleep-poll loops while it watches.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "pr",
+    "ci",
+    "github",
+    "polling",
+    "mod"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "intervalSeconds": {
+      "type": "number",
+      "title": "Poll interval (seconds)",
+      "description": "How often sentry polls each watched PR with gh.",
+      "default": 60,
+      "min": 15,
+      "max": 3600
+    },
+    "wake": {
+      "type": "string",
+      "title": "Wake the session",
+      "description": "actionable: submit a one-line prompt when a PR fails, becomes ready, gets changes requested or a new thread, merges or closes. never: only toast and redraw.",
+      "default": "actionable",
+      "options": [
+        "actionable",
+        "never"
+      ]
+    }
+  }
+}
