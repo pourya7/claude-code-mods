@@ -1,0 +1,8 @@
+# Engine declarations: written by /plugin-types, not redistributed
+types/claude-code*.d.ts
+types/claude-code-plugins/
+*/.claude-plugin/types/
+.claude/settings.local.json
+.worktrees/
+node_modules/
+.DS_Store

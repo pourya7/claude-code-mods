@@ -1,0 +1,11 @@
+{
+  "name": "claude-code-mods",
+  "owner": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "metadata": {
+    "description": "8-bit Claude Code mods for long, parallel, mostly unattended work: worktree pinning, enforced rules, PR watching without polling, enforced modes, claim checks and auto-continue."
+  },
+  "plugins": []
+}
