@@ -360,7 +360,7 @@ The mods should look like one arcade family.
 
 Each mod README opens with a short recorded GIF of the mod working in a real Claude Code session. Demos are recorded with [VHS](https://github.com/charmbracelet/vhs) and can be re-rendered by anyone with VHS and a signed-in `claude`.
 
-- **Sample project.** `demos/project/` is a tiny Node app with no dependencies: a `cart.js` module, a `node --test` suite run by `npm test`, and a README. `demos/setup.sh` copies it to a neutral path under the temp dir, makes it a git repo committed as `Demo <demo@example.com>`, and adds a linked worktree, so every demo starts from the same clean state. Mod-specific files (such as a project `.claude/tripwire.json`) are written by the tape's hidden setup, not committed into the sample app.
+- **Sample project.** `demos/project/` is a tiny Node app with no dependencies: a `cart.js` module, a `node --test` suite run by `npm test`, and a README. `demos/setup.sh` copies it to a neutral path under the temp dir, makes it a git repo committed as `Demo <demo@example.com>`, and adds a linked worktree, so every demo starts from the same clean state. A copy left by an earlier run is moved aside to a fresh temp folder, never deleted. Mod-specific files (such as a project `.claude/tripwire.json`) are written by the tape's hidden setup, not committed into the sample app.
 - **Session.** Every tape runs `claude --model haiku` (cheap and fast) with only the demoed mod loaded via `--plugin-dir`, the user's own settings, plugins and MCP servers left out (`--setting-sources project,local --strict-mcp-config`), and permissions preset so no prompt interrupts the run. The prompt is `$ `, and the trust dialog and environment setup happen off camera (`Hide`/`Show`).
 - **Look.** A dark theme taken from the author's terminal profile, in `demos/tapes/common.tape`, with JetBrains Mono. Width and frame rate are chosen so each GIF stays under 5 MB.
 - **Length.** Each demo runs under 30 seconds of playback.
@@ -369,8 +369,11 @@ Each mod README opens with a short recorded GIF of the mod working in a real Cla
   - `stance`: a prompt starting "No code, findings only" switches the stance to investigate (toast and badge band); an edit the model then attempts is refused with the stance message.
   - `anti-cheat`: the prompt asks for a small edit and a "tests pass" reply without running anything; the `FOUL!` referee band shows.
   - `hero`: one session with all three loaded, showing each in turn, for the root README.
-- **Mods that need real conditions** are not recorded yet. sentry and tracer need a PR with CI or a deploy and could be faked with a stub `gh` on `PATH`; dock needs Docker and could use a stub `docker`; respawn needs a dropped connection, which a recording cannot produce reliably. They are deferred.
-- **Privacy.** Recordings show only the neutral prompt, the temp-dir path and the demo user. No real names, accounts, hosts or home paths appear in any frame or tape.
+  - `anchor`: the session starts in the sample project's linked worktree; the status line shows the anchor, and a git write the model is asked to run in the primary checkout is denied with the anchor message.
+  - `honest-exit`: one test is broken off camera; the prompt runs the suite piped into `tail`, which exits 0, and the `HONEST EXIT` toast and status counter show the hidden failure.
+  - `prove-it`: the worktree holds a source fix and a new test; `/prove` reverts the fix, sees the test fail, restores it, sees it pass, and shows the `PROVEN ★` verdict band.
+- **Mods that need real conditions** are not recorded yet. sentry and tracer need a PR with CI or a deploy and could be faked with a stub `gh` on `PATH`; co-op reviews on `gh pr create` and needs the same stub; dock needs Docker and could use a stub `docker`; respawn needs a dropped connection, which a recording cannot produce reliably; radar needs memory files in the user's own config; quicksave needs a compaction; party needs several live sessions; mender needs an MCP server. They are deferred.
+- **Privacy.** Recordings show only the neutral prompt, the demo path (under the temp dir, or `/Users/Shared` for stance, whose investigate mode allows writes under temp dirs) and the demo user. No real names, accounts, hosts or home paths appear in any frame or tape.
 - **Acceptance.**
   - `scripts/record.sh` renders every tape, or only the mods named as arguments, and fails if any GIF is 5 MB or more or a tape fails.
   - Every GIF shows its mod's UI firing (band, toast or deny text) on a fresh run.
@@ -437,4 +440,4 @@ export const register: Register = (on, options) => {
 ## Open questions
 
 1. **CI.** There is none yet. Whether `claude plugin test` runs in GitHub Actions without auth is unverified.
-2. **Demos for the rest.** Only tripwire, stance and anti-cheat have recorded demos so far.
+2. **Demos for the rest.** tripwire, stance, anti-cheat, anchor, honest-exit and prove-it have recorded demos; the mods listed under Demos as needing real conditions do not yet.
