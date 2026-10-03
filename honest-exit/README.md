@@ -5,6 +5,8 @@
 
 # honest-exit — loud shell failures
 
+![honest-exit catching a failing test run hidden by a pipe into tail](../assets/honest-exit.gif)
+
 **The problem:** the shell fails quietly, and the model reads the quiet as success. A zsh glob that matches nothing makes zsh refuse to run the command that holds it. A command that works in your terminal is missing from the agent's shell, because your alias isn't loaded there. A test run piped into `tail` exits 0 even though the tests failed, because the pipeline's status is `tail`'s. The study behind this library counted **186 zsh "no matches found" errors** (each one a command that never ran), exit codes hidden by pipes, and `exit=$?` echoed by hand **~1,000 times** to work around it.
 
 honest-exit reads every Bash result, in the main loop and in subagents. When it spots one of these quiet failures, it attaches a note that only the model reads, explaining what really happened, and shows you a toast. It never blocks a command.

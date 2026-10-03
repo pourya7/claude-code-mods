@@ -8,6 +8,8 @@
  ▀▀▀██▀▀▀    PIN THE SESSION TO ITS WORKTREE
 ```
 
+![anchor pinning the session to its worktree and denying a git write in the primary checkout](../assets/anchor.gif)
+
 **The problem:** the shell leaves the worktree. In the study behind this library, 27k of 78.6k Bash calls started with `cd`, and 1,859 "shell cwd was reset" notices showed commands landing in the wrong checkout.
 
 anchor pins a Claude Code session to the directory it started in. Every Bash call, including the calls of subagents that share the session's directory, runs from the anchor. When the anchor is a linked git worktree, the primary checkout is guarded: edits and git writes that would land there are denied.
