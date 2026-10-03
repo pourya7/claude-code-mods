@@ -1,0 +1,31 @@
+{
+  "name": "radar",
+  "version": "0.1.0",
+  "description": "Memory at the moment it matters: when a tool call touches what one of your memory files is about, radar attaches that memory's description and rules for the model to read. A lavender pixel-art radar pings each match.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "memory",
+    "context",
+    "recall",
+    "pixel-art"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "memoryDirs": {
+      "type": "string",
+      "title": "Memory folders",
+      "description": "Folders of memory files to index, separated by commas; ~ is your home. Empty means the auto-memory folder: autoMemoryDirectory from settings if set, else ~/.claude/projects/<project>/memory.",
+      "default": ""
+    },
+    "toast": {
+      "type": "boolean",
+      "title": "Toast on each ping",
+      "description": "Show RADAR ▸ <memory name> each time a memory is attached to a call.",
+      "default": true
+    }
+  }
+}
