@@ -248,8 +248,8 @@ describe('sprite', () => {
 
 describe('status', () => {
   test('names the worktree and branch', () => {
-    expect(statusText({ name: 'first-wave', branch: 'feat/first-wave' })).toBe(
-      '╋ ANCHOR first-wave@feat/first-wave',
+    expect(statusText({ name: 'fix-login', branch: 'fix/login' })).toBe(
+      '╋ ANCHOR fix-login@fix/login',
     )
   })
 

@@ -7,3 +7,6 @@ types/claude-code-plugins/
 node_modules/
 .DS_Store
 */tsconfig.json
+
+# Local planning notes
+tasks/

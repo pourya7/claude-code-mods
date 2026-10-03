@@ -17,18 +17,16 @@
 
 ## Why
 
-Most published mods are dashboards, games or generic guards. These fourteen are mined from a study of **242 sessions, 1,145 subagent runs and 279 memory files**. Each one targets a mistake that kept coming back:
+Most published mods are dashboards, games or generic guards. These fifteen are mined from a study of the author's own **242 Claude Code sessions, 1,145 subagent runs and 279 memory files**. Each one targets a mistake that kept coming back:
 
 | Pain | Evidence | Mod |
 |---|---|---|
-| **Wave 1** | | |
 | The shell leaves the worktree | 27k of 78.6k Bash calls start with `cd`; 1,859 "shell cwd was reset" notices | anchor |
 | Prose rules don't hold | 405 never/don't lines across 189 memory files; 11+ mistakes repeated *after* being written down | tripwire |
 | The model does the waiting | ~1.8k poll loops, ~1.5k `sleep`s, ~1.2k CI-status calls; false greens right after a push | sentry |
 | Modes typed as preambles | "no code, no commit, no PR" typed in 44 sessions | stance |
 | Claims without evidence | "tests pass" / "CI green" after edits with no re-run; 23% of memories are verification traps | anti-cheat |
 | Dropped connections | ~120 API connection errors, each followed by a hand-typed "continue" | respawn |
-| **Wave 2** | | |
 | The right memory isn't there when it matters | 11+ mistakes recurred after being written down; ~2.7k tokens of memory index loaded into every session regardless of relevance | radar |
 | Compaction loses the plot | 91 compactions; summaries rewritten by hand; "is now a safe time to compact?" asked again and again | quicksave |
 | Parallel sessions block on you and collide | up to 5–10 sessions at once; ~190 h spent waiting on a human answer; two sessions acted on the same PR | party |
@@ -43,14 +41,12 @@ Most published mods are dashboards, games or generic guards. These fourteen are 
 
 | Mod | What it fixes | How it shows up | Docs |
 |---|---|---|---|
-| **Wave 1** | | | |
-| **anchor** | Pins a session to its git worktree. Every Bash call runs from the anchor, and the primary checkout is guarded against stray edits and git writes. | Status `╋ ANCHOR first-wave@feat/first-wave`, a toast on each block, `/anchor` | [README](anchor/README.md) |
+| **anchor** | Pins a session to its git worktree. Every Bash call runs from the anchor, and the primary checkout is guarded against stray edits and git writes. | Status `╋ ANCHOR fix-login@fix/login`, a toast on each block, `/anchor` | [README](anchor/README.md) |
 | **tripwire** | Turns the rules you already wrote down into deny / ask / rewrite / note checks on every tool call, subagents included. | Red `TRAP SPRUNG!` band, `/tripwire` pane of armed traps, `/tripwire add <sentence>` | [README](tripwire/README.md) |
 | **sentry** | Watches PRs outside the model with `gh` and wakes the session only when something actionable happens. Denies sleep-poll loops while it watches. | Watchtower pane, status `SENTRY #12 CI▓ REV░ 0T`, `/watch`, a `pr_state` tool | [README](sentry/README.md) |
 | **stance** | Session modes (investigate, draft, build, ship) that refuse the tool calls they rule out. Switches on phrases like "no code". | Class badge band with `[ INV ] [ DRAFT ] [ BUILD ] [ SHIP ]`, `/stance` | [README](stance/README.md) |
 | **anti-cheat** | Flags "tests pass", "CI green" and "verified" claims that nothing in the turn backs up. Deterministic, no model calls. | `FOUL!` referee band with `[ CHALLENGE ] [ OK ]`, a transcript notice | [README](anti-cheat/README.md) |
 | **respawn** | Continues a turn that died on a network or API error, with backoff and 3 lives per hour. | Orange `CONTINUE? 9` countdown band, `GAME OVER` when lives run out, `/respawn` | [README](respawn/README.md) |
-| **Wave 2** | | | |
 | **radar** | Matches each tool call against your memory files and attaches the relevant memory's description and rules to the result, for the model only. Never edits a memory. | Toast `RADAR ▸ <memory>`, lavender radar scope in the `/radar` pane, status `RADAR 274 ◉ 3 PINGS` | [README](radar/README.md) |
 | **quicksave** | Saves the goal, step, branch, links, decisions, rules and next step before every compaction and hands them back to the model after it. | Green `SAVE POINT ▸ safe to /compact` band with `[ SAVE ] [ SAVE + COMPACT ]`, `/quicksave`, `/quickload` | [README](quicksave/README.md) |
 | **party** | One view of every live session on the machine: who is working, who is waiting on you and for how long. Per-PR locks so two sessions never act on one PR. | Raid-frame `/party` pane with HP-style wait bars, status `PARTY 3 ▸ 1 WAITING`, `/broadcast` | [README](party/README.md) |

@@ -55,17 +55,17 @@ Set it in `/config`, or in settings under `pluginConfigs.anchor.options.protectP
 `/anchor` reply. The sprite is drawn with half blocks in PICO-8 blue `#29ADFF`, with a white ring and a navy shadow. It turns grey while the anchor is off.
 
 ```
-   ▄▀▀▄     ╋ ANCHOR SET  first-wave@feat/first-wave
-  ▄▄▀▀▄▄    ANCHOR  /work/repo/.worktrees/first-wave
+   ▄▀▀▄     ╋ ANCHOR SET  fix-login@fix/login
+  ▄▄▀▀▄▄    ANCHOR  /work/repo/.worktrees/fix-login
     ██      PRIMARY /work/repo  GUARDED
-█▄  ██  ▄█  BASH    cd '/work/repo/.worktrees/first-wave' && ...
+█▄  ██  ▄█  BASH    cd '/work/repo/.worktrees/fix-login' && ...
  ▀▀▀██▀▀▀   OFF     /anchor off
 ```
 
 Status line:
 
 ```
-╋ ANCHOR first-wave@feat/first-wave
+╋ ANCHOR fix-login@fix/login
 ```
 
 Toast on a deny:
