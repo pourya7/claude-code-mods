@@ -28,6 +28,8 @@ const PROPOSAL = { plugin: 'tripwire', key: 'proposal' } as const
 const proposalAtom = atom(PROPOSAL, null)
 const NOTICE = { plugin: 'tripwire', key: 'notice' } as const
 const noticeAtom = atom(NOTICE, null)
+const LOADED = { plugin: 'tripwire', key: 'loaded' } as const
+const loadedAtom = atom(LOADED, false)
 
 const ACTION_COLOR: Record<Rule['action'], string> = {
   deny: PICO8.r,
@@ -95,6 +97,7 @@ const loadRules = async ($: Engine) => {
   ])
   await $.state.set(RULES, merged.rules)
   await $.state.set(PROBLEMS, merged.problems)
+  await $.state.set(LOADED, true)
   try {
     const stored = hitsOf(await $.store.get(HITS_KEY))
     if (stored !== undefined) await $.state.set(HITS, stored)
@@ -104,6 +107,14 @@ const loadRules = async ($: Engine) => {
   const bad = merged.problems.length
   if (bad > 0) $.ui.toast(`TRIPWIRE: ${bad} BAD RULE${bad === 1 ? '' : 'S'} SKIPPED · /tripwire`)
   await showStatus($)
+}
+
+/**
+ * A /clear starts a new session with empty $.state and fires no session.start,
+ * so every hook that reads the rules loads them first if this session has not.
+ */
+const ensureLoaded = async ($: Engine) => {
+  if (!(await read($, loadedAtom))) await loadRules($)
 }
 
 /**
@@ -256,7 +267,20 @@ export const register: Register = (on, options) => {
     return next(e)
   })
 
+  // A /clear: the new session's state is empty; arm it again before any call.
+  on('classic.SessionStart', async ($, e, next) => {
+    if (e.source === 'clear') {
+      try {
+        await loadRules($)
+      } catch (error) {
+        $.ui.toast(`TRIPWIRE: could not reload after /clear (${errorText(error)})`)
+      }
+    }
+    return next(e)
+  })
+
   on('command.run', { command: 'tripwire' }, async ($, e) => {
+    await ensureLoaded($)
     const args = e.args.trim()
     const [verb = '', ...rest] = args.split(/\s+/)
     const sentence = rest.join(' ').trim()
@@ -288,6 +312,7 @@ export const register: Register = (on, options) => {
   on('tool.call', async ($, e, next) => {
     let outcome: ReturnType<typeof evaluate>
     try {
+      await ensureLoaded($)
       const rules = await read($, rulesAtom)
       if (rules.length === 0) return next(e)
       const disarmed = await read($, disarmedAtom)
@@ -324,6 +349,7 @@ export const register: Register = (on, options) => {
     try {
       const input = e.input
       if (typeof input !== 'object' || input === null) return decided
+      await ensureLoaded($)
       const rules = await read($, rulesAtom)
       const disarmed = await read($, disarmedAtom)
       const asks = evaluate(rules, disarmed, e.tool, input as Record<string, unknown>).asks

@@ -8,6 +8,7 @@ import {
   REWRITE_RULE,
   START,
   USER_FILE,
+  clearable,
   ruleFile,
   run,
   world,
@@ -295,5 +296,44 @@ describe('/tripwire', () => {
     await $.session.start(START)
     const reply = await $.command.run(run('frobnicate'))
     expect(reply.text).toMatch(/usage/i)
+  })
+})
+
+describe('/clear', () => {
+  const NO_VERIFY_RULE = {
+    id: 'no-verify',
+    tool: 'Bash',
+    match: 'git commit .*--no-verify',
+    field: 'command',
+    action: 'deny',
+    message: 'Hooks are the gate; never skip them.',
+  }
+
+  test('rules stay armed after /clear, and the status count matches the list', async ($, on) => {
+    const w = world(on, { [PROJECT_FILE]: ruleFile(NO_VERIFY_RULE) })
+    const clear = clearable(on)
+    await $.session.start(START)
+    expect(w.statuses.at(-1)).toBe('▲ TRIPWIRE 1 ARMED')
+    const shown = w.statuses.length
+    await clear($)
+    // The /clear itself re-arms and redraws the status, before any call.
+    expect(w.statuses.length).toBe(shown + 1)
+    const reply = await $.command.run(run('list'))
+    expect(reply.text).toContain('TRAPS ARMED: 1')
+    expect(w.statuses.at(-1)).toBe('▲ TRIPWIRE 1 ARMED')
+    const ran = await $.tool.call({ tool: 'Bash', command: 'git commit -m wip --no-verify' })
+    expect(ran.deny).toContain('TRAP SPRUNG')
+    expect(w.ran).toHaveLength(0)
+  })
+
+  test('the first tool call after a /clear loads the rules if nothing else has', async ($, on) => {
+    const w = world(on, { [PROJECT_FILE]: ruleFile(NO_VERIFY_RULE) })
+    const clear = clearable(on)
+    await $.session.start(START)
+    await clear($, { isAnnounced: false })
+    const ran = await $.tool.call({ tool: 'Bash', command: 'git commit -m wip --no-verify' })
+    expect(ran.deny).toContain('TRAP SPRUNG')
+    expect(w.ran).toHaveLength(0)
+    expect(w.statuses.at(-1)).toBe('▲ TRIPWIRE 1 ARMED')
   })
 })
