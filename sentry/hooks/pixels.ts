@@ -1,4 +1,4 @@
-// 8-bit art: the PICO-8 palette, the watchtower sprite and a half-block renderer.
+// Pixel art: the PICO-8 palette, the watchtower sprite and a half-block renderer.
 import type { Level } from './truth'
 
 export const PICO = {

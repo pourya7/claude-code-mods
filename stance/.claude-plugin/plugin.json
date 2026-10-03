@@ -1,7 +1,7 @@
 {
   "name": "stance",
   "version": "0.1.0",
-  "description": "Session modes that are enforced, not requested: investigate, draft, build, ship. Denies the tool calls a stance rules out, auto-switches on phrases like \"no code\", and shows an 8-bit class badge above the prompt.",
+  "description": "Session modes that are enforced, not requested: investigate, draft, build, ship. Denies the tool calls a stance rules out, auto-switches on phrases like \"no code\", and shows a pixel-art class badge above the prompt.",
   "author": {
     "name": "Pourya",
     "url": "https://github.com/pourya7"
@@ -11,7 +11,7 @@
     "mods",
     "modes",
     "guardrails",
-    "8-bit"
+    "pixel-art"
   ],
   "types": "./types/index.d.ts",
   "userConfig": {

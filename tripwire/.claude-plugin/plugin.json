@@ -1,7 +1,7 @@
 {
   "name": "tripwire",
   "version": "0.1.0",
-  "description": "Rules that are enforced, not remembered: deny, ask, rewrite or note on any tool call, subagents included. An 8-bit trap for every mistake you already wrote down.",
+  "description": "Rules that are enforced, not remembered: deny, ask, rewrite or note on any tool call, subagents included. A pixel-art trap for every mistake you already wrote down.",
   "author": {
     "name": "Pourya",
     "url": "https://github.com/pourya7"
@@ -11,7 +11,7 @@
     "guardrail",
     "rules",
     "policy",
-    "8-bit"
+    "pixel-art"
   ],
   "types": "./types/index.d.ts",
   "userConfig": {

@@ -9,7 +9,7 @@
 ██      ██  ██████████  ████████    ██████████   ▶ INSERT COIN
 ```
 
-**8-bit [Claude Code mods](https://code.claude.com/docs/en/plugins/mods/overview) for long, parallel, mostly unattended work.**
+**[Claude Code mods](https://code.claude.com/docs/en/plugins/mods/overview) for long, parallel, mostly unattended work.**
 
 > **Memories are advice. Mods are law.**
 >
@@ -76,7 +76,7 @@ claude plugin validate anchor    # one mod: manifest and module checks
 claude plugin test anchor        # one mod: runs anchor/tests/*.test.ts
 ```
 
-Editor typings for the mods API come from the engine itself. Run `/plugin-types types` inside Claude Code to write them to `types/`; they are git-ignored and not redistributed. [SPEC.md](SPEC.md) holds the design, the shared 8-bit style guide and each mod's acceptance criteria.
+Editor typings for the mods API come from the engine itself. Run `/plugin-types types` inside Claude Code to write them to `types/`; they are git-ignored and not redistributed. [SPEC.md](SPEC.md) holds the design, the shared visual style guide and each mod's acceptance criteria.
 
 ## Security
 

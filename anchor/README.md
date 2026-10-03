@@ -50,7 +50,7 @@ The rewrite makes each command compound (`cd … && cmd`). Claude Code checks pe
 
 Set it in `/config`, or in settings under `pluginConfigs.anchor.options.protectPrimary`.
 
-## The 8-bit UI
+## The UI
 
 `/anchor` reply. The sprite is drawn with half blocks in PICO-8 blue `#29ADFF`, with a white ring and a navy shadow. It turns grey while the anchor is off.
 
