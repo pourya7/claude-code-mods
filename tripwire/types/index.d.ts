@@ -35,6 +35,8 @@ declare module 'claude-code' {
       sprung: TripwireSprung | null
       proposal: TripwireProposal | null
       notice: string | null
+      /** Whether this session has read the rule files; a /clear starts it false. */
+      loaded: boolean
     }
   }
 }
