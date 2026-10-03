@@ -1,0 +1,56 @@
+{
+  "name": "prove-it",
+  "version": "0.1.0",
+  "description": "The fix must make a test fail first: reverts your source changes, runs the changed tests and requires a failure, restores (verified by hash) and requires a pass. Optional gate on git push and gh pr create.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "testing",
+    "verification",
+    "regression",
+    "guardrail",
+    "pixel-art"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "testCommand": {
+      "type": "string",
+      "title": "Test command",
+      "description": "The command that runs tests, with the changed test files appended as arguments (no shell), e.g. \"npm test --\", \"pytest\" or \"go test\". Runs at the repository root.",
+      "default": ""
+    },
+    "testGlobs": {
+      "type": "string",
+      "title": "Test file globs",
+      "description": "Comma-separated globs (relative to the repository root) that mark a changed file as a test.",
+      "default": "**/*.test.*, **/*_test.*, **/test_*.py, tests/**"
+    },
+    "sourceGlobs": {
+      "type": "string",
+      "title": "Source file globs",
+      "description": "Comma-separated globs for the files that make up the fix. Empty means every changed tracked file that is not a test.",
+      "default": ""
+    },
+    "base": {
+      "type": "string",
+      "title": "Base branch",
+      "description": "The ref the change is measured against (its merge base with HEAD). Empty means origin's default branch, then origin/main, origin/master, main, master.",
+      "default": ""
+    },
+    "gate": {
+      "type": "boolean",
+      "title": "Gate push and PR",
+      "description": "Run the proof before git push and gh pr create, and refuse them unless the fix is proven. /prove skip lets the next one through.",
+      "default": false
+    },
+    "timeoutSeconds": {
+      "type": "number",
+      "title": "Test timeout (seconds)",
+      "description": "How long one test run may take before it counts as an error (at most 600).",
+      "default": 300
+    }
+  }
+}
