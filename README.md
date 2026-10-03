@@ -4,7 +4,7 @@
 ▀▀▀▀▀ ▀▀▀▀▀ ▀   ▀ ▀▀▀▀▀ ▀▀▀▀  ▀▀▀▀▀     ▀▀▀▀▀ ▀▀▀▀▀ ▀▀▀▀  ▀▀▀▀▀
 ██      ██  ██████████  ████████    ██████████
 ████  ████  ██      ██  ██      ██  ██           1UP  ♥♥♥
-██  ██  ██  ██      ██  ██      ██  ██████████   14 MODS LOADED
+██  ██  ██  ██      ██  ██      ██  ██████████   15 MODS LOADED
 ██      ██  ██      ██  ██      ██          ██   PRESS START
 ██      ██  ██████████  ████████    ██████████   ▶ INSERT COIN
 ```
@@ -36,6 +36,7 @@ Most published mods are dashboards, games or generic guards. These fourteen are 
 | One agent's word isn't enough | ~1,600 second-model review runs typed or scripted by hand before PRs | co-op |
 | The shell lies quietly | 186 zsh "no matches found" (the command never ran); exit codes hidden by pipes; `exit=$?` echoed ~1,000× | honest-exit |
 | Local stacks eat the laptop | 10 parallel container stacks crashed a machine; orphaned stacks from deleted worktrees | dock |
+| Merged is not deployed | "merged but I still can't see it" in 34 prompts across 14 sessions | tracer |
 | MCP calls fail on argument shapes | ~65 schema errors (unknown keys, `"true"` for `true`, numbers as strings) | mender |
 
 ## Select your mod
@@ -57,6 +58,7 @@ Most published mods are dashboards, games or generic guards. These fourteen are 
 | **co-op** | A second model reviews the branch diff before `gh pr create`; a failing review with a high finding blocks the PR. Fails open. | Blue `2P REVIEW` band with `[ VIEW ]`, findings pane, status `CO-OP ▸ PASS`, `/coop` | [README](co-op/README.md) |
 | **honest-exit** | Makes silent shell failures loud: a glob that matched nothing, a missing aliased command, a pipe that hid a failing exit status. | Peach `HONEST EXIT` toast, status `EXIT ▸ 3 CAUGHT`, `/honest-exit` pane | [README](honest-exit/README.md) |
 | **dock** | Every compose stack with its worktree and memory, orphans whose worktree is gone, and an ask before booting another stack when headroom is low. Read-only. | `/dock` pane with a fuel gauge, `ORPHAN` rows, `[ DOWN ]` copies the command | [README](dock/README.md) |
+| **tracer** | Follows a merged PR or commit through its workflow runs, deployments and an optional live URL, and wakes the session once when it is live or a stage fails. | Level map `MERGED ▸ BUILD ▸ DEPLOY ▸ LIVE`, `/trace <pr\|sha>` | [README](tracer/README.md) |
 | **mender** | Repairs malformed MCP tool arguments against the tool's own schema before the call, tells the model what it fixed, and flags servers that are down. | Toast `MENDER ▸ <SERVER> DOWN`, `/mender` patch log pane, status `MENDER ▸ 3 FIXED` | [README](mender/README.md) |
 
 Every mod is a standalone plugin. Install one, some or all; none depends on another.
@@ -78,7 +80,7 @@ Requires **Claude Code 2.1.287 or later**.
 /reload-plugins
 ```
 
-Swap `anchor` for any mod: `tripwire`, `sentry`, `stance`, `anti-cheat`, `respawn`, `radar`, `quicksave`, `party`, `prove-it`, `co-op`, `honest-exit`, `dock`, `mender`.
+Swap `anchor` for any mod: `tripwire`, `sentry`, `stance`, `anti-cheat`, `respawn`, `radar`, `quicksave`, `party`, `prove-it`, `co-op`, `honest-exit`, `dock`, `tracer`, `mender`.
 
 ## Try from source
 

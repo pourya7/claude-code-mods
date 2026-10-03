@@ -40,7 +40,7 @@ Approach: one worktree + branch per mod (`.worktrees/<mod>`, `feat/<mod>`). Per 
 - [x] W2-5 co-op — M — blocked by W2-0
 - [x] W2-6 honest-exit — S — blocked by W2-0
 - [x] W2-7 dock — M — blocked by W2-0
-- [ ] W2-8 tracer — M — blocked by W2-0
+- [x] W2-8 tracer — M — blocked by W2-0
 - [x] W2-9 mender — M — blocked by W2-0
-- [ ] W2-10 integration PR — S — blocked by W2-1..9
+- [x] W2-10 integration PR — S — blocked by W2-1..9
   - Each W2-1..9 — Acceptance: SPEC.md › Wave 2 › that module's bullets. Verify: `claude plugin validate <mod> && claude plugin test <mod>`; PR merged.
