@@ -60,7 +60,7 @@ const world = (on: On, { isGitBroken = false } = {}): World => {
     }
     if (cwd === WORKTREE) {
       return isBranch
-        ? ok('feat/first-wave\n')
+        ? ok('fix/login\n')
         : ok(`${PRIMARY}/.git/worktrees/wt\n${PRIMARY}/.git\n${WORKTREE}\n`)
     }
     if (cwd === PRIMARY) {
@@ -106,9 +106,9 @@ describe('anchor setting', () => {
     await $.session.start({ cwd: WORKTREE, surface: null, isInteractive: false })
 
     expect(seen.registered).toContain('anchor')
-    expect(seen.statuses.at(-1)).toBe(`╋ ANCHOR it's here@feat/first-wave`)
+    expect(seen.statuses.at(-1)).toBe(`╋ ANCHOR it's here@fix/login`)
     const shown = await $.command.run({ command: 'anchor', args: '' })
-    expect(shown.text).toContain(`ANCHOR SET  it's here@feat/first-wave`)
+    expect(shown.text).toContain(`ANCHOR SET  it's here@fix/login`)
     expect(shown.text).toContain(`ANCHOR  ${WORKTREE}`)
     expect(shown.text).toContain(`PRIMARY ${PRIMARY}`)
   })

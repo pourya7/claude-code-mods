@@ -6,11 +6,11 @@ const SURFACES = ['terminal', 'desktop'] as const
 
 const POINT = {
   isOn: true,
-  path: '/work/repo/.worktrees/first-wave',
-  root: '/work/repo/.worktrees/first-wave',
+  path: '/work/repo/.worktrees/fix-login',
+  root: '/work/repo/.worktrees/fix-login',
   primary: '/work/repo',
-  name: 'first-wave',
-  branch: 'feat/first-wave',
+  name: 'fix-login',
+  branch: 'fix/login',
 }
 
 const props = (text: string) => ({ command: 'anchor', args: '', text, isErrored: false })
@@ -26,15 +26,15 @@ describe('/anchor reply', () => {
       })
 
       const title = await ui.find({ type: 'Text', text: /^╋ ANCHOR/ })
-      expect(title?.text).toBe('╋ ANCHOR SET  first-wave@feat/first-wave')
+      expect(title?.text).toBe('╋ ANCHOR SET  fix-login@fix/login')
       expect(title?.props.color).toBe('#29ADFF')
 
       const pixels = await ui.findAll({ type: 'Text', text: /[▀▄█]/ })
       expect(pixels.length).toBeGreaterThan(5)
       expect(pixels.some(cell => cell.props.color === '#29ADFF')).toBe(true)
 
-      expect((await ui.find({ type: 'Text', text: '/work/repo/.worktrees/first-wave' }))?.text).toBe(
-        '/work/repo/.worktrees/first-wave',
+      expect((await ui.find({ type: 'Text', text: '/work/repo/.worktrees/fix-login' }))?.text).toBe(
+        '/work/repo/.worktrees/fix-login',
       )
       expect(await ui.find({ type: 'Text', text: 'GUARDED' })).toBeDefined()
     })

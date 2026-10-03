@@ -6,7 +6,7 @@
 ▀▀▀   ▀  ▀  ▀ ▀  ▀  ▀▀▀ ▀▀▀▀   ★ SELECT YOUR CLASS ★
 ```
 
-**Session modes that are enforced, not requested.** In a study of 242 sessions, "no code, no commit, no PR" was typed as a preamble in 44 of them. Typing it is a request the model can forget. With stance it is a rule: the tool call is refused before it runs.
+**Session modes that are enforced, not requested.** In a study of 242 of the author's own Claude Code sessions, "no code, no commit, no PR" was typed as a preamble in 44 of them. Typing it is a request the model can forget. With stance it is a rule: the tool call is refused before it runs.
 
 | Stance | Badge | What it allows |
 |---|---|---|

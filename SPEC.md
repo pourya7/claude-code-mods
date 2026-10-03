@@ -1,8 +1,8 @@
-# Spec: claude-code-mods — first wave
+# Spec: claude-code-mods
 
 ## Objective
 
-A public library of [Claude Code mods](https://code.claude.com/docs/en/plugins/mods/overview), published as a plugin marketplace, that fix the problems a product engineer actually has when Claude Code runs long, parallel, mostly unattended work. Most of the 1,000+ published mods are dashboards, games, or generic guards. These mods are different: each one is mined from a real study of 242 sessions, 1,145 subagent runs, and 279 memory files.
+A public library of [Claude Code mods](https://code.claude.com/docs/en/plugins/mods/overview), published as a plugin marketplace, that fix the problems a product engineer actually has when Claude Code runs long, parallel, mostly unattended work. Most of the 1,000+ published mods are dashboards, games, or generic guards. These mods are different: each one is mined from a study of the author's own 242 Claude Code sessions, 1,145 subagent runs, and 279 memory files.
 
 **Thesis: memories are advice, mods are law.** A rule written in `CLAUDE.md` or memory is something the model may forget. A mod enforces it at the moment of the tool call.
 
@@ -10,7 +10,7 @@ A public library of [Claude Code mods](https://code.claude.com/docs/en/plugins/m
 
 **Success:** someone can run `/plugin marketplace add pourya7/claude-code-mods`, install any one mod, and immediately get a guardrail or a removed chore. Each mod passes `claude plugin validate` and `claude plugin test`, and looks like part of one pixel-art family.
 
-### Evidence (aggregate numbers; quote freely, no employer specifics)
+### Evidence (aggregate numbers)
 
 | Pain | Evidence | Mod |
 |---|---|---|
@@ -20,22 +20,38 @@ A public library of [Claude Code mods](https://code.claude.com/docs/en/plugins/m
 | Modes typed as preambles | "no code, no commit, no PR" in 44 sessions | stance |
 | Claims without evidence | "tests pass" / "CI green" after edits with no re-run; 23% of memories are verification traps | anti-cheat |
 | Dropped connections | ~120 API connection errors; "continue" / "try again" typed by hand | respawn |
+| The right memory isn't salient at the moment it matters | ≥11 mistakes recurred after being written down; ~2.7k tokens of memory index loaded into every session regardless of relevance | radar |
+| Compaction loses the plot | 91 compactions; summaries rewritten by hand; "is now a safe time to compact?" asked repeatedly | quicksave |
+| Parallel sessions block on you and collide | up to 5–10 sessions at once; ~190 h of sessions waiting on a human answer; two sessions acted on the same PR | party |
+| Checks that pass without checking | 64 memory notes are verification traps: zero-iteration gates, no-op "proofs", tests that pass with the fix removed | prove-it |
+| One agent's word isn't enough | ~1,600 second-model review runs typed or scripted by hand before PRs | co-op |
+| The shell lies quietly | 186 zsh "no matches found" (the command never ran); exit codes hidden by pipes; `exit=$?` echoed ~1,000× | honest-exit |
+| Local stacks eat the laptop | 10 parallel container stacks crashed a machine; orphaned stacks from deleted worktrees | dock |
+| Merged ≠ deployed | "merged but I still can't see it" in 34 prompts across 14 sessions | tracer |
+| MCP calls fail on argument shapes | ~65 schema errors (unknown keys, `"true"` for `true`, numbers as strings) | mender |
 
 ## Capability map
 
-Each mod is an independent plugin: no mod imports another, and each folder is installable alone.
+Each mod is an independent plugin: no mod imports another, and each folder installs alone. Every mod relies only on the marketplace scaffold.
 
-| Module id | Responsibility | Depends on |
+| Module id | Responsibility | Signature colour |
 |---|---|---|
 | `marketplace` | Root `.claude-plugin/marketplace.json`, README, LICENSE, tsconfig, `scripts/check.sh`, shared visual style guide (this spec) | — |
-| `anchor` | Pin a session to its git worktree | marketplace |
-| `tripwire` | Turn written rules into enforced deny/ask/rewrite/note checks on tool calls | marketplace |
-| `sentry` | Watch PRs outside the model and wake the session only when something actionable happens | marketplace |
-| `stance` | Session modes (investigate / draft / build / ship) that are enforced, not just requested | marketplace |
-| `anti-cheat` | Check "tests pass / CI green / verified" claims at turn end against what actually ran | marketplace |
-| `respawn` | Auto-continue after a turn dies on a network or API error | marketplace |
-
-Build order: `marketplace` → all six mods in parallel → README integration.
+| `anchor` | Pin a session to its git worktree | blue |
+| `tripwire` | Turn written rules into enforced deny/ask/rewrite/note checks on tool calls | red |
+| `sentry` | Watch PRs outside the model and wake the session only when something actionable happens | yellow |
+| `stance` | Session modes (investigate / draft / build / ship) that are enforced, not just requested | pink |
+| `anti-cheat` | Check "tests pass / CI green / verified" claims at turn end against what actually ran | lime |
+| `respawn` | Auto-continue after a turn dies on a network or API error | orange |
+| `radar` | Surface the relevant memory at the tool call that needs it | lavender |
+| `quicksave` | Save task state before compaction, restore it after | green |
+| `party` | One view of every live session on the machine; who is blocked on you; per-PR locks | pink |
+| `prove-it` | A new test must fail with the fix reverted before push / PR | red |
+| `co-op` | Second-model review gate on PR creation | blue |
+| `honest-exit` | Make silent shell failures loud | peach |
+| `dock` | Container stacks per worktree: memory headroom, orphans, guarded boot | navy + blue |
+| `tracer` | Follow a merged commit until it is deployed (and optionally live) | yellow |
+| `mender` | Fix malformed MCP arguments against the tool's own schema | brown + orange |
 
 ## Tech stack
 
@@ -81,7 +97,7 @@ The mods should look like one arcade family.
   - brown `#AB5236`, dark grey `#5F574F`, light grey `#C2C3C7`, white `#FFF1E8`
   - red `#FF004D`, orange `#FFA300`, yellow `#FFEC27`, lime `#00E436`
   - blue `#29ADFF`, lavender `#83769C`, pink `#FF77A8`, peach `#FFCCAA`
-  - Each mod has a signature colour: anchor blue, tripwire red, sentry yellow, stance pink, anti-cheat lime, respawn orange.
+  - Each mod has a signature colour, listed in the capability map.
 - **Pixels: half-block sprites.** Draw with `▀` using Text `color` for the top pixel and `backgroundColor` for the bottom one, so one terminal row holds two pixel rows. Sprites are defined as string grids, where each character is a palette key and `.` is transparent. A tiny renderer turns a grid into `Text` runs. Each mod copies its own renderer; there is no shared runtime code.
 - **Typography.** Labels are UPPERCASE arcade style, such as `INSERT COIN`, `1UP`, `READY!`, `GAME OVER`, `CONTINUE? 9`.
   - Use single-width characters only (block elements `█▀▄▌▐░▒▓`, box drawing, `♥ ★ ● ◆ ▶`). No emoji: they are double-width and break terminal alignment.
@@ -106,7 +122,7 @@ The mods should look like one arcade family.
   - Deny Bash commands that run git write verbs (`commit`, `checkout`, `switch`, `reset`, `stash`, `merge`, `rebase`, `push`, `branch -D`, `restore`) against the primary path, via `cd <primary>` or `git -C <primary>`.
   - The deny text names the anchor and how to override (`/anchor off`).
 - **UI.**
-  - Status line: a single-width glyph plus the worktree name and branch, e.g. `╋ ANCHOR first-wave@feat/first-wave` (no `⚓`, which renders as an emoji in many terminals).
+  - Status line: a single-width glyph plus the worktree name and branch, e.g. `╋ ANCHOR fix-login@fix/login` (no `⚓`, which renders as an emoji in many terminals).
   - Toast on each deny.
   - `/anchor` replies with a small pixel anchor sprite and the paths.
 - **Acceptance.**
@@ -272,110 +288,6 @@ The mods should look like one arcade family.
   - Buttons work.
   - Uses the mocked clock in tests.
 
-## Code style
-
-```tsx
-import type { Register } from 'claude-code'
-import { compileRules, matchRule } from './rules'
-
-export const register: Register = (on, options) => {
-  on('tool.call', async ($, e, next) => {
-    const hit = matchRule(rules, e)
-    if (hit?.action === 'deny') return { deny: trapText(hit) }
-    return next(e)
-  })
-}
-```
-
-- Small pure helpers in `hooks/*.ts` with unit tests, and a thin `register.tsx`.
-- Names say what things are (`headSha`, `isActionable`, `unverifiedClaims`). No abbreviations beyond `e`, `$` and `next`.
-- No module-level mutable state that must survive a reload: use `$.state` (session) and `$.store` (across sessions) with a `types/index.d.ts` contract.
-- Every `$.process.run` and `$.http.fetch` failure is handled. A mod degrades to a toast; it never throws out of a hook.
-
-## Testing strategy
-
-- `claude plugin test <mod>` runs every `tests/*.test.ts`. Each mod has:
-  - unit tests for its pure helpers
-  - `register.test.ts` covering every acceptance bullet through the engine's `$`, with `mock.clock` for timers and `process.run` and `model.complete` answered by test hooks
-  - UI tests that mount each component on **both** `terminal` and `desktop`
-- `claude plugin validate <mod>` is clean (no refusals) for every mod.
-- `scripts/check.sh` runs both for all mods and is the gate before each commit.
-- Where possible, a headless smoke run: `claude -p --plugin-dir <mod> --model haiku "<prompt>"` proves the hooks fire in a real engine (e.g. anchor's rewrite shows in `pwd`).
-
-## Boundaries
-
-- **Always:**
-  - Validate and test before committing.
-  - Keep each mod self-contained.
-  - Draw only through `$.ui.resolve`.
-  - Write a README with a permissions table (network, processes, files, model calls, what leaves the machine).
-- **Ask first:**
-  - adding runtime dependencies
-  - adding CI workflows
-  - any network endpoint other than GitHub via `gh`
-  - publishing to the Claude directory
-- **Never:**
-  - Mention the author's employer, its repos, tickets, vendors, hosts or customers (this repo is public).
-  - Approve a permission prompt on the user's behalf.
-  - Auto-submit prompts except sentry's wake, anti-cheat's opt-in challenge, and respawn's continue, and each of those can be switched off.
-  - Send data anywhere but the user's own model and `gh`.
-  - Commit `types/claude-code*.d.ts`.
-
-## Success criteria
-
-1. `scripts/check.sh` exits 0: all six mods validate clean and every test passes on terminal and desktop.
-2. `/plugin marketplace add pourya7/claude-code-mods` lists six mods. Each installs alone and loads (`/plugin` shows it active).
-3. Every acceptance bullet above has at least one test.
-4. Each mod README has a text capture of its pixel-art UI, commands, config and permissions. The root README has the banner, thesis, evidence table, install steps and mod table.
-5. No employer-specific strings in the repo (checked with grep before push).
-
-## Open questions (assumed; correct later)
-
-1. **License.** MIT is assumed.
-2. **Commits and PRs.** `SPEC.md` and `tasks/plan.md` are committed. The first wave lands as a PR from `feat/first-wave` for review rather than straight onto `main`.
-3. **CI.** There is none yet. Whether `claude plugin test` runs in GitHub Actions without auth is unverified.
-4. **Screenshots.** The first wave ships text captures. Real screenshots come later.
-
----
-
-# Wave 2
-
-Same stack, commands, structure, visual style guide, code style, testing strategy and boundaries as wave 1 (above). Each mod ships in its own PR containing only its folder; one integration PR then adds the marketplace entries and README rows.
-
-## Evidence (aggregate)
-
-| Pain | Evidence | Mod |
-|---|---|---|
-| The right memory isn't salient at the moment it matters | ≥11 mistakes recurred after being written down; ~2.7k tokens of memory index loaded into every session regardless of relevance | radar |
-| Compaction loses the plot | 91 compactions; summaries rewritten by hand; "is now a safe time to compact?" asked repeatedly | quicksave |
-| Parallel sessions block on you and collide | up to 5–10 sessions at once; ~190 h of sessions waiting on a human answer; two sessions acted on the same PR | party |
-| Checks that pass without checking | 64 memory notes are verification traps: zero-iteration gates, no-op "proofs", tests that pass with the fix removed | prove-it |
-| One agent's word isn't enough | ~1,600 second-model review runs typed or scripted by hand before PRs | co-op |
-| The shell lies quietly | 186 zsh "no matches found" (the command never ran); exit codes hidden by pipes; `exit=$?` echoed ~1,000× | honest-exit |
-| Local stacks eat the laptop | 10 parallel container stacks crashed a machine; orphaned stacks from deleted worktrees | dock |
-| Merged ≠ deployed | "merged but I still can't see it" in 34 prompts across 14 sessions | tracer |
-| MCP calls fail on argument shapes | ~65 schema errors (unknown keys, `"true"` for `true`, numbers as strings) | mender |
-
-## Capability map (wave 2)
-
-All independent; none imports another or a wave-1 mod.
-
-| Module id | Responsibility | Signature colour |
-|---|---|---|
-| `radar` | Surface the relevant memory at the tool call that needs it | lavender |
-| `quicksave` | Save task state before compaction, restore it after | green |
-| `party` | One view of every live session on the machine; who is blocked on you; per-PR locks | pink |
-| `prove-it` | A new test must fail with the fix reverted before push / PR | red |
-| `co-op` | Second-model review gate on PR creation | blue |
-| `honest-exit` | Make silent shell failures loud | peach |
-| `dock` | Container stacks per worktree: memory headroom, orphans, guarded boot | navy + blue |
-| `tracer` | Follow a merged commit until it is deployed (and optionally live) | yellow |
-| `mender` | Fix malformed MCP arguments against the tool's own schema | brown + orange |
-
-Build order: all nine in parallel → integration.
-
-## Module specs (wave 2)
-
 ### radar — memory at the moment it matters
 - Memory sources (`userConfig.memoryDirs`, default: the auto-memory directory from settings `autoMemoryDirectory` if set, else the project's `~/.claude/projects/<slug>/memory`): every `*.md` with frontmatter `name`/`description`; optional frontmatter `triggers:` (list of regexes) and lines in the body starting with or containing **never/always/don't/must** become the memory's *rules*.
 - Index on `session.start` and `/radar reload`; matching is deterministic: explicit `triggers` first, then keyword overlap between the tool input (Bash command, file path, URL, MCP tool name + args) and the memory's name/description tokens (stop-words removed, ≥2 distinctive tokens or one trigger hit).
@@ -437,7 +349,64 @@ Build order: all nine in parallel → integration.
 - Connector down (error text indicates disconnected/unauthenticated server): toast `MENDER ▸ <server> DOWN` once and attach a note to stop retrying until the user reconnects.
 - Never invents values or changes a value that already satisfies the schema. Acceptance: each coercion with schema; no-op on valid input; unknown-key drop only when `additionalProperties: false`; repair notes; down detection.
 
-## Wave 2 success criteria
-1. Each of the nine mods: `claude plugin validate` clean, `claude plugin test` 0 failures on terminal and desktop, README with permissions table, merged via its own PR.
-2. Integration PR: marketplace lists 15 mods and validates; README tables updated; `scripts/check.sh` ALL CLEAR on `main`.
-3. Privacy: no employer or job detail and no secrets in any file or commit (swept before every push).
+## Code style
+
+```tsx
+import type { Register } from 'claude-code'
+import { compileRules, matchRule } from './rules'
+
+export const register: Register = (on, options) => {
+  on('tool.call', async ($, e, next) => {
+    const hit = matchRule(rules, e)
+    if (hit?.action === 'deny') return { deny: trapText(hit) }
+    return next(e)
+  })
+}
+```
+
+- Small pure helpers in `hooks/*.ts` with unit tests, and a thin `register.tsx`.
+- Names say what things are (`headSha`, `isActionable`, `unverifiedClaims`). No abbreviations beyond `e`, `$` and `next`.
+- No module-level mutable state that must survive a reload: use `$.state` (session) and `$.store` (across sessions) with a `types/index.d.ts` contract.
+- Every `$.process.run` and `$.http.fetch` failure is handled. A mod degrades to a toast; it never throws out of a hook.
+
+## Testing strategy
+
+- `claude plugin test <mod>` runs every `tests/*.test.ts`. Each mod has:
+  - unit tests for its pure helpers
+  - `register.test.ts` covering every acceptance bullet through the engine's `$`, with `mock.clock` for timers and `process.run` and `model.complete` answered by test hooks
+  - UI tests that mount each component on **both** `terminal` and `desktop`
+- `claude plugin validate <mod>` is clean (no refusals) for every mod.
+- `scripts/check.sh` runs both for all mods and is the gate before each commit.
+- Where possible, a headless smoke run: `claude -p --plugin-dir <mod> --model haiku "<prompt>"` proves the hooks fire in a real engine (e.g. anchor's rewrite shows in `pwd`).
+
+## Boundaries
+
+- **Always:**
+  - Validate and test before committing.
+  - Keep each mod self-contained.
+  - Draw only through `$.ui.resolve`.
+  - Write a README with a permissions table (network, processes, files, model calls, what leaves the machine).
+- **Ask first:**
+  - adding runtime dependencies
+  - adding CI workflows
+  - any network endpoint other than GitHub via `gh`
+  - publishing to the Claude directory
+- **Never:**
+  - Include secrets or private data: names of people, companies, internal repos, tickets, hosts or customers (this repo is public).
+  - Approve a permission prompt on the user's behalf.
+  - Auto-submit prompts except sentry's wake, anti-cheat's opt-in challenge, and respawn's continue, and each of those can be switched off.
+  - Send data anywhere but the user's own model and `gh`.
+  - Commit `types/claude-code*.d.ts`.
+
+## Success criteria
+
+1. `scripts/check.sh` exits 0: every mod validates clean and every test passes on terminal and desktop.
+2. `/plugin marketplace add pourya7/claude-code-mods` lists every mod. Each installs alone and loads (`/plugin` shows it active).
+3. Every acceptance bullet above has at least one test.
+4. Each mod README has a text capture of its pixel-art UI, commands, config and permissions. The root README has the banner, thesis, evidence table, install steps and mod table.
+5. No secrets and no private data in any file or commit.
+
+## Open questions
+
+1. **CI.** There is none yet. Whether `claude plugin test` runs in GitHub Actions without auth is unverified.
+2. **Screenshots.** READMEs ship text captures of each UI; real screenshots would help.
