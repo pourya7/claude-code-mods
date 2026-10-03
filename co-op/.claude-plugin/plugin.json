@@ -1,0 +1,43 @@
+{
+  "name": "co-op",
+  "version": "0.1.0",
+  "description": "A second player reviews before the PR: gh pr create waits for a second-model review of the branch diff, and a failing review with a high finding blocks it.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "code-review",
+    "pull-request",
+    "guardrail",
+    "pixel-art"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "model": {
+      "type": "string",
+      "title": "Reviewer model",
+      "description": "The model that reviews the diff. Empty picks another tier than the session's model (opus reviews sonnet's work, sonnet reviews opus's and haiku's), else the session's model.",
+      "default": ""
+    },
+    "command": {
+      "type": "string",
+      "title": "Reviewer command",
+      "description": "Optional. A command line run instead of the model, with the review prompt and diff on stdin; its stdout must hold the same JSON verdict. It sends your diff wherever that command sends it.",
+      "default": ""
+    },
+    "maxDiffKb": {
+      "type": "number",
+      "title": "Diff limit (KB)",
+      "description": "The diff is cut at a line boundary below this many kilobytes before review, and the review says so.",
+      "default": 200
+    },
+    "timeoutSeconds": {
+      "type": "number",
+      "title": "Review time limit (seconds)",
+      "description": "How long the reviewer may take. Past it the review counts as unreadable and the PR is let through with a toast.",
+      "default": 180
+    }
+  }
+}
