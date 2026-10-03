@@ -1,0 +1,31 @@
+{
+  "name": "mender",
+  "version": "0.1.0",
+  "description": "Fix the arguments, not the model: repairs malformed MCP tool arguments (\"true\" for true, numbers as strings, unknown keys) against the tool's schema before the call, tells the model what it fixed, and flags servers that are down. A pixel-art patch log.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "schema",
+    "validation",
+    "pixel-art"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "schemaFile": {
+      "type": "string",
+      "title": "Schema file",
+      "description": "A JSON file of MCP tool input schemas: a map of mcp__<server>__<tool> to its schema, or a server's tools/list answer under \"servers\". ~ is your home directory. A missing file is fine.",
+      "default": "~/.claude/mender/schemas.json"
+    },
+    "learn": {
+      "type": "boolean",
+      "title": "Learn shapes from errors",
+      "description": "When a tool rejects its arguments with a validation error, remember the shape it asked for and repair later calls to match. Learned shapes are kept across sessions; /mender forget clears them.",
+      "default": true
+    }
+  }
+}
