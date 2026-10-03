@@ -1,0 +1,70 @@
+// The starter pack: generic rules most people want on day one. Mirrored in
+// examples/tripwire.json, which is what `/tripwire init` writes.
+import type { Rule } from './rules'
+
+export const STARTER_RULES: Rule[] = [
+  {
+    id: 'no-force-push',
+    tool: 'Bash',
+    match: String.raw`\bgit(?:\s+(?:-[Cc]\s+\S+|-{1,2}\w[\w-]*(?:=\S+)?))*\s+push\b[^;&|\n]*\s(?:(?:--force|-f)(?=\s|$)|\+[^\s:+])`,
+    field: 'command',
+    action: 'deny',
+    message: 'Force pushes rewrite shared history. Use --force-with-lease.',
+    cite: 'memory/never-force-push.md',
+  },
+  {
+    id: 'no-verify',
+    tool: 'Bash',
+    match: String.raw`\bgit(?:\s+(?:-[Cc]\s+\S+|-{1,2}\w[\w-]*(?:=\S+)?))*\s+(?:commit|push|merge|rebase|am|cherry-pick)\b[^;&|\n]*\s--no-verify\b`,
+    field: 'command',
+    action: 'deny',
+    message: 'Hooks are there for a reason. Fix what they catch instead of skipping them.',
+  },
+  {
+    id: 'no-admin-merge',
+    tool: 'Bash',
+    match: String.raw`\bgh\s+pr\s+merge\b[^;&|\n]*\s--admin\b`,
+    field: 'command',
+    action: 'deny',
+    message: 'An admin merge bypasses branch protection. Get the checks and reviews green.',
+  },
+  {
+    id: 'no-checkout-discard',
+    tool: 'Bash',
+    match: String.raw`\bgit\s+checkout\b[^;&|\n]*\s--\s+\S`,
+    field: 'command',
+    action: 'deny',
+    message: 'git checkout -- <file> throws away uncommitted work. Back the file up first (cp file file.bak), then restore.',
+  },
+  {
+    id: 'no-rm-root',
+    tool: 'Bash',
+    match: String.raw`\brm\s+(?:-\S+\s+)*["']?(?:/|~|\$HOME|\$\{HOME\})/?\*?["']?(?=\s|;|&|\||$)`,
+    field: 'command',
+    action: 'deny',
+    message: 'rm on / or the home directory. Name the exact path you mean.',
+  },
+  {
+    id: 'no-curl-pipe-sh',
+    tool: 'Bash',
+    match: String.raw`\b(?:curl|wget)\b[^|;&\n]*\|\s*(?:sudo\s+)?(?:ba|z|da|k)?sh\b`,
+    field: 'command',
+    action: 'deny',
+    message: 'Piping a download into a shell runs code nobody read. Download, read, then run.',
+  },
+  {
+    id: 'checks-after-push',
+    tool: 'Bash',
+    match: String.raw`\bgh\s+pr\s+checks\b`,
+    field: 'command',
+    action: 'note',
+    message: 'Right after a push, gh pr checks can still list the previous commit\'s checks (a false green). Confirm they belong to the pushed head SHA before reporting CI status.',
+  },
+  {
+    id: 'protected-host',
+    tool: '*',
+    match: String.raw`api\.example\.com`,
+    action: 'ask',
+    message: 'Template: api.example.com stands for a host you protect. Edit the match, or delete this rule.',
+  },
+]
