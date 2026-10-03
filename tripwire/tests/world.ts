@@ -119,7 +119,37 @@ export const world = (
   })
   on('tool.check', () => check)
   on('session.start', ($, e) => ({ cwd: e.cwd }))
+  on('session.end', ($, e) => ({ sessionId: e.sessionId }))
   return state
+}
+
+/**
+ * Holds the session's $.state in the world instead of the kit, so a test can
+ * play a /clear: session.end with reason 'clear', the state emptied as the
+ * host does for the new session, then the classic SessionStart with source
+ * 'clear' (no session.start fires); `{ isAnnounced: false }` leaves that last
+ * event out. Register it before the first call on $.
+ * Values set here redraw nothing, so UI tests keep the kit's own state.
+ */
+export const clearable = (on: On) => {
+  let held: Record<string, { value: unknown; version: number }> = {}
+  const slot = (e: { plugin: string; key: string; id?: string }) => `${e.plugin}/${e.key}/${e.id ?? ''}`
+  on('state.get', ($, e) => ({ value: held[slot(e)] ?? { value: undefined, version: 0 } }))
+  on('state.set', ($, e) => {
+    const version = held[slot(e)]?.version ?? 0
+    if (e.ifVersion !== undefined && e.ifVersion !== version) return { value: { isSet: false, version } }
+    held[slot(e)] = { value: e.value, version: version + 1 }
+    return { value: { isSet: true, version: version + 1 } }
+  })
+  on('classic.SessionStart', () => ({}))
+  return async (
+    $: { session: { end: (e: never) => Promise<unknown> }; classic: { SessionStart: (e: never) => Promise<unknown> } },
+    { isAnnounced = true } = {},
+  ) => {
+    await $.session.end({ reason: 'clear', sessionId: 'before-clear', resume: { id: 'before-clear' } } as never)
+    held = {}
+    if (isAnnounced) await $.classic.SessionStart({ source: 'clear' } as never)
+  }
 }
 
 export const ruleFile = (...rules: unknown[]) => JSON.stringify({ rules }, null, 2)
