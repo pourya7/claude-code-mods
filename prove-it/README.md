@@ -7,6 +7,8 @@
                                ▄▀▀  ▀▀▄
 ```
 
+![prove-it reverting a fix, seeing the new test fail, restoring it and showing PROVEN](../assets/prove-it.gif)
+
 **A test that passes with the fix removed proves nothing.** prove-it puts your changed source files back to how they were at the merge base, runs the changed tests and requires them to **fail**, puts your files back (checked by hash), runs the tests again and requires them to **pass**.
 
 **The problem, in one line:** 64 memory notes in the study behind this library were verification traps: gates that ran zero times, "proofs" that checked nothing, and tests that passed with the fix removed.

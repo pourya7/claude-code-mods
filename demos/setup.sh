@@ -5,7 +5,10 @@
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 dir="${1:-/tmp/mods-demo/app}"
-rm -rf "$dir" "$dir-feature"
+# A copy left by an earlier run is moved aside to a fresh temp folder, not deleted.
+for old in "$dir" "$dir-feature"; do
+  if [ -e "$old" ]; then mv "$old" "$(mktemp -d "${TMPDIR:-/tmp}/mods-demo-old.XXXXXX")/"; fi
+done
 mkdir -p "$dir"
 cp -R "$here/project/." "$dir"
 cd "$dir"
