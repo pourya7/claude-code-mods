@@ -1,0 +1,26 @@
+{
+  "name": "anchor",
+  "version": "0.1.0",
+  "description": "Pin a session to its git worktree: every Bash call runs from the anchor, and the primary checkout is guarded against stray edits and git writes.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mods",
+    "worktree",
+    "git",
+    "guardrails",
+    "8-bit"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "protectPrimary": {
+      "type": "boolean",
+      "title": "Protect the primary checkout",
+      "description": "When anchored in a linked worktree, deny edits and git writes that land in the primary checkout.",
+      "default": true
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "tripwire",
+  "version": "0.1.0",
+  "description": "Rules that are enforced, not remembered: deny, ask, rewrite or note on any tool call, subagents included. An 8-bit trap for every mistake you already wrote down.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "guardrail",
+    "rules",
+    "policy",
+    "8-bit"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "compileModel": {
+      "type": "string",
+      "title": "Model for /tripwire add",
+      "description": "The model that turns a plain-English sentence into a proposed rule. The proposal is never armed until you press ARM.",
+      "default": "haiku"
+    },
+    "band": {
+      "type": "boolean",
+      "title": "TRAP SPRUNG band",
+      "description": "Show a red band above the prompt when a deny rule fires.",
+      "default": true
+    }
+  }
+}

@@ -6,22 +6,22 @@ Parallel: T1–T6 are independent (separate folders, no shared code). T7 needs a
 
 ## Tasks
 
-- [ ] T0 marketplace scaffold — size S
+- [x] T0 marketplace scaffold — size S
   - Acceptance: `.claude-plugin/marketplace.json` (name `claude-code-mods`), LICENSE (MIT), `.gitignore`, `tsconfig.json`, `scripts/check.sh`, README stub; pushed to `main`.
   - Verify: `scripts/check.sh` runs (no mods yet → exits 0); `git log origin/main`.
-- [ ] T1 anchor — size M — blocked by T0
+- [x] T1 anchor — size M — blocked by T0
   - Acceptance: SPEC.md › anchor acceptance bullets. Verify: `claude plugin validate anchor && claude plugin test anchor`.
-- [ ] T2 tripwire — size L — blocked by T0
+- [x] T2 tripwire — size L — blocked by T0
   - Acceptance: SPEC.md › tripwire. Verify: validate + test.
-- [ ] T3 sentry — size L — blocked by T0
+- [x] T3 sentry — size L — blocked by T0
   - Acceptance: SPEC.md › sentry. Verify: validate + test.
-- [ ] T4 stance — size M — blocked by T0
+- [x] T4 stance — size M — blocked by T0
   - Acceptance: SPEC.md › stance. Verify: validate + test.
-- [ ] T5 anti-cheat — size M — blocked by T0
+- [x] T5 anti-cheat — size M — blocked by T0
   - Acceptance: SPEC.md › anti-cheat. Verify: validate + test.
-- [ ] T6 respawn — size S — blocked by T0
+- [x] T6 respawn — size S — blocked by T0
   - Acceptance: SPEC.md › respawn. Verify: validate + test.
-- [ ] T7 README + marketplace integration + privacy sweep — size M — blocked by T1–T6
+- [x] T7 README + marketplace integration + privacy sweep — size M — blocked by T1–T6
   - Acceptance: SPEC.md success criteria 1, 2, 4, 5. Verify: `scripts/check.sh`; `claude plugin validate .` on the marketplace; grep for employer strings returns nothing.
 - [ ] T8 PR — size XS — blocked by T7
   - Acceptance: `feat/first-wave` pushed, PR open against `main` with the check output.

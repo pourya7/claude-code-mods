@@ -1,0 +1,30 @@
+{
+  "name": "anti-cheat",
+  "version": "0.1.0",
+  "description": "No claims without evidence: flags \"tests pass\", \"CI green\" and \"verified\" claims that nothing in the turn backs up.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": [
+    "verification",
+    "testing",
+    "ci",
+    "guardrail",
+    "8-bit"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "mode": {
+      "type": "string",
+      "title": "Mode",
+      "description": "flag: show the referee band and log a notice. challenge: also send the model a prompt to run the missing check.",
+      "default": "flag",
+      "options": [
+        "flag",
+        "challenge"
+      ]
+    }
+  }
+}
