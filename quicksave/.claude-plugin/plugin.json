@@ -1,0 +1,26 @@
+{
+  "name": "quicksave",
+  "version": "0.1.0",
+  "description": "A save point before compaction: the task's goal, step, branch, links, decisions, rules and next step are saved before /compact and handed back to the model after it, with a pixel-art SAVE POINT band when it is safe to compact.",
+  "author": {
+    "name": "Pourya",
+    "url": "https://github.com/pourya7"
+  },
+  "license": "MIT",
+  "keywords": ["compaction", "context", "save", "restore", "memory", "pixel art"],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "warnAtPercent": {
+      "type": "number",
+      "title": "Save point at (% of context)",
+      "description": "Show the SAVE POINT band once the context window is this full and the session is idle.",
+      "default": 70
+    },
+    "writeFile": {
+      "type": "boolean",
+      "title": "Mirror saves to a file",
+      "description": "Also write each save to <session cwd>/.claude/quicksave/<session id>.md. Off by default.",
+      "default": false
+    }
+  }
+}
