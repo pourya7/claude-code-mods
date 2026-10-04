@@ -7,6 +7,8 @@
                  THE RAID FRAME FOR YOUR SESSIONS
 ```
 
+![Three sessions in tmux: one waits on a party lock prompt for PR #12, and /party shows its wait bar filling and turning red](../assets/party.gif)
+
 When you run several Claude Code sessions at once, each one sits in its own terminal tab. You only find out that one has been waiting on a permission prompt for twenty minutes when you happen to look at it, and nothing stops two sessions from merging, commenting on or editing the same PR a minute apart.
 
 party gives every session on the machine one shared view: who is working, who is waiting on you and for how long, and a lock that makes the second session ask before it acts on a PR the first one just touched.
