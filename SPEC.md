@@ -372,7 +372,8 @@ Each mod README opens with a short recorded GIF of the mod working in a real Cla
   - `anchor`: the session starts in the sample project's linked worktree; the status line shows the anchor, and a git write the model is asked to run in the primary checkout is denied with the anchor message.
   - `honest-exit`: the cart source is broken off camera so the suite throws; the prompt runs the suite piped into `tail`, which exits 0, and the `HONEST EXIT` toast and status counter show the hidden failure.
   - `prove-it`: the worktree holds a source fix and a new test; `/prove` reverts the fix, sees the test fail, restores it, sees it pass, and shows the `PROVEN ★` verdict band.
-- **Mods that need real conditions** are not recorded yet. sentry and tracer need a PR with CI or a deploy and could be faked with a stub `gh` on `PATH`; co-op reviews on `gh pr create` and needs the same stub; dock needs Docker and could use a stub `docker`; respawn needs a dropped connection, which a recording cannot produce reliably; radar needs memory files in the user's own config; quicksave needs a compaction; party needs several live sessions; mender needs an MCP server. They are deferred.
+  - `radar`: `memoryDirs` points at a temp copy of `demos/fixtures/memory/`, four neutral lessons; with an uncommitted change in the cart, the prompt runs `git diff` and asks to discard the change; the `RADAR ▸` toast and status count show the ping, the model copies the file aside before `git checkout --`, and `/radar` shows the scope and the ping.
+- **Mods that need real conditions** are not recorded yet. sentry and tracer need a PR with CI or a deploy and could be faked with a stub `gh` on `PATH`; co-op reviews on `gh pr create` and needs the same stub; dock needs Docker and could use a stub `docker`; respawn needs a dropped connection, which a recording cannot produce reliably; quicksave needs a compaction; party needs several live sessions; mender needs an MCP server. They are deferred. radar, which reads memory files from the user's own config, is recorded against a neutral fixture set in `demos/fixtures/memory/` instead.
 - **Privacy.** Recordings show only the neutral prompt, the demo path (under the temp dir, or `/Users/Shared` for stance, whose investigate mode allows writes under temp dirs) and the demo user. No real names, accounts, hosts or home paths appear in any frame or tape.
 - **Acceptance.**
   - `scripts/record.sh` renders every tape, or only the mods named as arguments, and fails if any GIF is 5 MB or more or a tape fails.
@@ -440,4 +441,4 @@ export const register: Register = (on, options) => {
 ## Open questions
 
 1. **CI.** There is none yet. Whether `claude plugin test` runs in GitHub Actions without auth is unverified.
-2. **Demos for the rest.** tripwire, stance, anti-cheat, anchor, honest-exit and prove-it have recorded demos; the mods listed under Demos as needing real conditions do not yet.
+2. **Demos for the rest.** tripwire, stance, anti-cheat, anchor, honest-exit, prove-it and radar have recorded demos; the mods listed under Demos as needing real conditions do not yet.

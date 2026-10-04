@@ -10,6 +10,8 @@
     ▀▀▀▀▀
 ```
 
+![radar pinging a memory on git diff, and the model backing the file up before git checkout --](../assets/radar.gif)
+
 **The problem:** a memory file helps only if the model thinks of it at the right moment, and usually it doesn't. The study behind this library found **at least 11 mistakes that recurred after they had been written down**. Meanwhile **~2.7k tokens of memory index** were loaded into every session, whether or not any of it applied.
 
 radar indexes your memory files when the session starts. When a tool call touches what a memory is about, the call runs as normal, and radar attaches that memory's description and rule lines to the result. Only the model sees it, right next to the output of the command or edit that made it relevant. A lavender radar scope in the `/radar` pane pings each time. radar never edits a memory file.
