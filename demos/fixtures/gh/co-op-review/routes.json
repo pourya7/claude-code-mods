@@ -1,0 +1,8 @@
+{
+  "description": "co-op demo: the branch feature of demo/cart, opened as PR #12. co-op itself makes no gh calls (it diffs with git against the local main), so the only route is the one gh pr create (or gh's alias gh pr new) reaches when co-op lets it through. In the demo it is denied, so a call landing here means the review passed.",
+  "routes": [
+    { "joined": "^pr (create|new)( |$)",
+      "stderr": "\nCreating pull request for feature into main in demo/cart\n\n",
+      "stdout": "https://github.com/demo/cart/pull/12\n" }
+  ]
+}
