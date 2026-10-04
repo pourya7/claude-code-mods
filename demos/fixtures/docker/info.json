@@ -1,0 +1,1 @@
+{"ID":"demo-engine","Containers":6,"ContainersRunning":6,"ContainersPaused":0,"ContainersStopped":0,"Images":4,"Driver":"overlay2","OperatingSystem":"Demo Engine","OSType":"linux","Architecture":"aarch64","NCPU":8,"MemTotal":8589934592,"Name":"demo-engine","ServerVersion":"27.3.1"}

@@ -1,0 +1,6 @@
+{"BlockIO":"12.3MB / 4.1MB","CPUPerc":"0.42%","Container":"a1a1a1a1a1a1","ID":"a1a1a1a1a1a1","MemPerc":"15.00%","MemUsage":"1.2GiB / 8GiB","Name":"app-web-1","NetIO":"1.2MB / 800kB","PIDs":"11"}
+{"BlockIO":"40.1MB / 22.5MB","CPUPerc":"0.08%","Container":"a2a2a2a2a2a2","ID":"a2a2a2a2a2a2","MemPerc":"7.81%","MemUsage":"640MiB / 8GiB","Name":"app-db-1","NetIO":"900kB / 1.1MB","PIDs":"7"}
+{"BlockIO":"10.2MB / 3.3MB","CPUPerc":"0.37%","Container":"b1b1b1b1b1b1","ID":"b1b1b1b1b1b1","MemPerc":"13.75%","MemUsage":"1.1GiB / 8GiB","Name":"app-feature-web-1","NetIO":"600kB / 410kB","PIDs":"11"}
+{"BlockIO":"35.7MB / 18.0MB","CPUPerc":"0.06%","Container":"b2b2b2b2b2b2","ID":"b2b2b2b2b2b2","MemPerc":"6.25%","MemUsage":"512MiB / 8GiB","Name":"app-feature-db-1","NetIO":"500kB / 700kB","PIDs":"7"}
+{"BlockIO":"18.9MB / 6.0MB","CPUPerc":"0.51%","Container":"c1c1c1c1c1c1","ID":"c1c1c1c1c1c1","MemPerc":"25.00%","MemUsage":"2GiB / 8GiB","Name":"app-old-feature-web-1","NetIO":"3.4MB / 2.9MB","PIDs":"12"}
+{"BlockIO":"88.0MB / 51.2MB","CPUPerc":"0.11%","Container":"c2c2c2c2c2c2","ID":"c2c2c2c2c2c2","MemPerc":"9.38%","MemUsage":"768MiB / 8GiB","Name":"app-old-feature-db-1","NetIO":"2.0MB / 2.6MB","PIDs":"7"}

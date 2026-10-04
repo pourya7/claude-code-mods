@@ -1,0 +1,1 @@
+[{"Name":"app","Status":"running(2)","ConfigFiles":"@ROOT@/app/compose.yaml"},{"Name":"app-feature","Status":"running(2)","ConfigFiles":"@ROOT@/app-feature/compose.yaml"},{"Name":"app-old-feature","Status":"running(2)","ConfigFiles":"@ROOT@/app-old-feature/compose.yaml"}]
