@@ -3,6 +3,8 @@
 █ ▀ █ ██▄ █ ▀█ █▄▀ ██▄ █▀▄   PATCH LOG
 ```
 
+![mender repairing a cart tool call: one tag sent as a string becomes a list and an unknown key is dropped before the call, then the PATCH LOG pane](../assets/mender.gif)
+
 # mender — fix the arguments, not the model
 
 **The problem:** MCP tool calls fail on the shape of their arguments, not on what they mean. The model sends `"true"` where the tool wants `true`, `"10"` where it wants `10`, one label where it wants a list, or a key the tool does not take. The tool refuses, the model guesses, and the turn burns a retry or two. The study behind this library counted **~65 schema errors** of exactly this kind: unknown keys, `"true"` for `true`, and numbers sent as strings.
