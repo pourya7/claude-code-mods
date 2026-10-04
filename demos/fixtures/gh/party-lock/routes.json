@@ -1,0 +1,9 @@
+{
+  "description": "party demo: PR #12 in demo/cart. One session comments on it, another then tries to merge it. Only these two writes are served; anything else fails loudly. A merge landing here means the party lock was answered yes, which the demo never does.",
+  "routes": [
+    { "joined": "^pr comment 12 (-R|--repo) demo/cart( |$)",
+      "stdout": "https://github.com/demo/cart/pull/12#issuecomment-1\n" },
+    { "joined": "^pr merge 12 (-R|--repo) demo/cart( |$)",
+      "stdout": "✓ Squashed and merged pull request demo/cart#12 (Free shipping from 50 dollars)\n" }
+  ]
+}
