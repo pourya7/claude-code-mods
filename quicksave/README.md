@@ -3,6 +3,8 @@
 ▀▀█ █▄█ █ █▄▄ █ █ ▄█ █▀█ ▀▄▀ ██▄   SAVE POINT ▸
 ```
 
+![/compact saves the goal, decision, rule and next step first, and the save comes back as the first message after the compaction](../assets/quicksave.gif)
+
 # quicksave — a save point before compaction
 
 **The problem:** compaction rewrites a long session into a summary, and the summary loses the plot: the exact goal, the branch, the PR you were on, the decisions already made, and the rules you set an hour ago. The study behind this library counted **91 compactions**, summaries rewritten by hand afterwards, and "is now a safe time to compact?" asked again and again.
