@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Stand-in `docker` for the README demos. It fakes a Docker engine with three
+# compose stacks so dock's pane and guard can be recorded without touching the
+# real Docker on the recording machine, whose stacks and memory are private.
+#
+# It answers only the read-only probes dock runs, with canned output from
+# demos/fixtures/docker/, and starts, stops or removes nothing. Any other
+# command fails loudly (exit 64) so nothing can fall through to a real engine.
+#
+#   docker info --format json                     -> info.json (8 GiB engine)
+#   docker compose ls --all --format json         -> compose-ls.json
+#   docker ps --all --no-trunc --format json      -> ps.jsonl
+#   docker stats --no-stream --format json        -> stats.jsonl
+#   docker compose up ...                         -> refuses, exit 1 (nothing is booted)
+#
+# `@ROOT@` in the fixtures becomes the folder that holds the demo app, with
+# symlinks resolved (/tmp -> /private/tmp on macOS), so the stacks' working
+# dirs match the session's: $DOCKER_STUB_ROOT, else the parent of $DEMO_DIR.
+# $DOCKER_STUB_LOG, when set, gets one line per call.
+set -uo pipefail
+
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fixtures="${DOCKER_STUB_FIXTURES:-$here/../fixtures/docker}"
+[ -n "${DOCKER_STUB_LOG:-}" ] && printf '%s\n' "docker $*" >>"$DOCKER_STUB_LOG"
+
+fail() {
+  printf 'docker (demo stub): %s\n' "$1" >&2
+  exit "${2:-64}"
+}
+
+root="${DOCKER_STUB_ROOT:-}"
+if [ -z "$root" ] && [ -n "${DEMO_DIR:-}" ]; then root="$(dirname "$DEMO_DIR")"; fi
+[ -n "$root" ] || fail 'set DEMO_DIR or DOCKER_STUB_ROOT so the fixture paths can be filled in'
+mkdir -p "$root" 2>/dev/null
+root="$(cd "$root" 2>/dev/null && pwd -P)" || fail "cannot resolve $root"
+
+serve() {
+  [ -f "$fixtures/$1" ] || fail "missing fixture $fixtures/$1"
+  sed "s#@ROOT@#$root#g" "$fixtures/$1"
+}
+
+case "$*" in
+  'info --format json') serve info.json ;;
+  'compose ls --all --format json') serve compose-ls.json ;;
+  'ps --all --no-trunc --format json') serve ps.jsonl ;;
+  'stats --no-stream --format json') serve stats.jsonl ;;
+  'compose up' | 'compose up '*) fail 'this is a stand-in engine for a recording; it boots nothing' 1 ;;
+  *) fail "unknown command: docker $*" ;;
+esac

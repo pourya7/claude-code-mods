@@ -3,6 +3,8 @@
 █▄▀ █▄█ █▄▄ █ █   HEADROOM 1.5 GIB ▶ LOW FUEL
 ```
 
+![dock's guard turning a docker compose up into an ask at 1.8 GiB headroom, then the /dock pane with its fuel gauge, three stacks and the ORPHAN row](../assets/dock.gif)
+
 # dock — container stacks per worktree
 
 **The problem:** every git worktree boots its own `docker compose` stack, and nobody counts them. Delete a worktree and its stack keeps running, holding memory for code that no longer exists. Boot one more and the machine falls over. The study behind this library found **10 parallel container stacks crashing a machine**, and orphaned stacks left behind by deleted worktrees.
