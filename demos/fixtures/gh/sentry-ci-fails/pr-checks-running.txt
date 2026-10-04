@@ -1,0 +1,2 @@
+lint	pass	12s	https://github.com/demo/cart/actions/runs/4821/job/9001	
+test (node 24)	pending	0	https://github.com/demo/cart/actions/runs/4821/job/9002	

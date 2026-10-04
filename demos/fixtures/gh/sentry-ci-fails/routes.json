@@ -1,0 +1,98 @@
+{
+  "description": "sentry demo: PR #12 in demo/cart. On head 3f9c2e1, lint has passed and 'test (node 24)' is running for the first 5 s after the first gh call; after that it has failed (applyDiscount, 70 !== 630). Run 4821, failing job 9002.",
+  "routes": [
+    {
+      "args": [
+        "repo",
+        "view",
+        "--json",
+        "nameWithOwner",
+        "--jq",
+        ".nameWithOwner"
+      ],
+      "stdout": "demo/cart\n"
+    },
+    {
+      "args": [
+        "api",
+        "graphql",
+        "-f",
+        "re:^query=",
+        "-f",
+        "owner=demo",
+        "-f",
+        "name=cart",
+        "-F",
+        "number=12"
+      ],
+      "file": "pr-12.json"
+    },
+    {
+      "args": [
+        "api",
+        "repos/demo/cart/commits/3f9c2e1a7b0d4c58e6f1a2b3c4d5e6f708192a3b/check-runs?per_page=100&page=1"
+      ],
+      "states": [
+        {
+          "before": 5,
+          "file": "check-runs-running.json"
+        },
+        {
+          "file": "check-runs-failed.json"
+        }
+      ]
+    },
+    {
+      "joined": "^pr checks( #?12)? (.* )?--json",
+      "states": [
+        {
+          "before": 5,
+          "jsonFile": "pr-checks-running.json",
+          "exitCode": 8
+        },
+        {
+          "jsonFile": "pr-checks-failed.json",
+          "exitCode": 1
+        }
+      ]
+    },
+    {
+      "joined": "^pr checks( #?12)?$",
+      "states": [
+        {
+          "before": 5,
+          "file": "pr-checks-running.txt",
+          "exitCode": 8
+        },
+        {
+          "file": "pr-checks-failed.txt",
+          "exitCode": 1
+        }
+      ]
+    },
+    {
+      "joined": "^run view (?=.*\\b(4821|9002)\\b)(?=.*--log-failed)",
+      "file": "run-4821-log-failed.txt"
+    },
+    {
+      "joined": "^run view (?=.*\\b4821\\b)(?=.*(--job|-j)[ =]9002\\b)(?=.*--log\\b)",
+      "file": "run-4821-log-failed.txt"
+    },
+    {
+      "joined": "^run view (?=.*\\b4821\\b)(?=.*--log\\b)",
+      "file": "run-4821-log.txt"
+    },
+    {
+      "joined": "^run view (?=.*\\b4821\\b)(?=.*(--job|-j)[ =]9002\\b)(?!.*--log)",
+      "file": "run-4821-job-9002.txt"
+    },
+    {
+      "joined": "^run view (--job|-j)[ =]9002$",
+      "file": "run-4821-job-9002.txt"
+    },
+    {
+      "joined": "^run view 4821$",
+      "file": "run-4821.txt"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+X Simplify applyDiscount ci · 4821
+Triggered via pull_request about 1 minute ago
+
+JOBS
+✓ lint in 12s (ID 9001)
+X test (node 24) in 39s (ID 9002)
+  X Run npm test
+
+ANNOTATIONS
+X Process completed with exit code 1.
+test (node 24): .github#1
+
+
+To see what failed, try: gh run view 4821 --log-failed
+View this run on GitHub: https://github.com/demo/cart/actions/runs/4821

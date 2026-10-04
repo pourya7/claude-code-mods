@@ -44,9 +44,13 @@ Type "run git diff src/cart.js, then discard that change."
 Sleep 500ms
 Enter
 Sleep 12s
-Set TypingSpeed 80ms
+# Type the command off camera: a partial "/ra" lists every installed
+# command, including the recorder's own.
+Hide
 Type "/radar"
 Sleep 800ms
+Show
+Sleep 600ms
 Enter
 Sleep 4s
 

@@ -3,6 +3,9 @@
 #   source demos/session.sh <mod>...
 export PS1='$ '
 export DEMO_MODS="$*"
+# Keep the recorder's own auto memory out of demo sessions: it is private, and
+# it would steer the model instead of the mod being shown.
+export CLAUDE_CODE_DISABLE_AUTO_MEMORY=1
 cd "${DEMO_DIR:-/tmp/mods-demo/app}"
 claude() {
   local plugins=() mod

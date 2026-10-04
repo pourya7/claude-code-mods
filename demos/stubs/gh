@@ -1,0 +1,164 @@
+#!/usr/bin/env node
+// Stand-in `gh` for the README demos. It fakes the GitHub CLI so mods that
+// watch PRs and CI (sentry, tracer, co-op) can be recorded without reaching
+// real GitHub: the recording machine's account and repos are private.
+//
+// It is a fixture server, not a GitHub client. It never runs the real gh and
+// makes no network calls. Each call's argv is matched against the routes of
+// one scenario, demos/fixtures/gh/<scenario>/routes.json, picked with
+// GH_STUB_SCENARIO, and the matching route's canned answer is printed. A call
+// no route matches fails loudly (exit 64), so nothing falls through.
+//
+// routes.json:
+//   { "routes": [ { "args": [...] | "joined": "re", <answer> | "states": [...] } ] }
+//
+//   The first route that matches wins.
+//   args     patterns for argv after `gh`, matched in order, all of them:
+//            "text" exact, "re:<regex>" a JS regex, a final "..." any rest.
+//   joined   instead of args: a JS regex tested on the argv after `gh`
+//            joined with single spaces, for flags that come in any order.
+//   answer   "stdout": "text" or "file": "name" (relative to the scenario),
+//            plus optional "stderr" and "exitCode" (default 0). Or
+//            "jsonFile": "name", a JSON list of objects served like gh's
+//            `--json a,b`: only the asked fields, in gh's field order; a
+//            field the objects lack fails as gh does (exit 1). `--jq` and
+//            `--template` are not supported and fail loudly.
+//   states   time-based answers: a list of answers, each with an optional
+//            "before": N. The first whose N is above the seconds elapsed
+//            since the clock started wins; one without "before" is the last.
+//
+// The clock: GH_STUB_CLOCK names a file holding a start time (epoch seconds).
+// A tape can write it off camera; if the file does not exist, the first call
+// that needs it writes it, so "before": 8 means "for 8 s after first asked".
+// Point GH_STUB_CLOCK at a fresh temp path per recording.
+//
+// GH_STUB_LOG, when set, gets one line per call: epoch time, seconds since
+// the clock started (- for routes that do not use it), exit code and argv.
+// GH_STUB_FIXTURES overrides the fixtures root (default ../fixtures/gh).
+'use strict'
+const fs = require('node:fs')
+const path = require('node:path')
+
+const args = process.argv.slice(2)
+const fixturesRoot = process.env.GH_STUB_FIXTURES || path.join(__dirname, '..', 'fixtures', 'gh')
+const scenario = process.env.GH_STUB_SCENARIO || ''
+const nowSeconds = Date.now() / 1000
+
+function log(elapsed, code) {
+  const file = process.env.GH_STUB_LOG
+  if (!file) return
+  const stamp = elapsed === null ? '-' : elapsed.toFixed(1)
+  fs.appendFileSync(file, `${nowSeconds.toFixed(1)}\t${stamp}\t${code}\tgh ${args.map(one => JSON.stringify(one)).join(' ')}\n`)
+}
+
+function fail(message, elapsed = null) {
+  log(elapsed, 64)
+  process.stderr.write(`gh (demo stub): ${message}\n`)
+  process.exit(64)
+}
+
+if (scenario === '' || !/^[\w.-]+$/.test(scenario)) fail('set GH_STUB_SCENARIO to a folder under demos/fixtures/gh')
+const scenarioDir = path.join(fixturesRoot, scenario)
+let routes
+try {
+  routes = JSON.parse(fs.readFileSync(path.join(scenarioDir, 'routes.json'), 'utf8')).routes
+} catch (error) {
+  fail(`cannot read ${scenario}/routes.json: ${error.message}`)
+}
+if (!Array.isArray(routes)) fail(`${scenario}/routes.json has no "routes" list`)
+
+function matches(patterns) {
+  for (let index = 0; index < patterns.length; index += 1) {
+    const pattern = patterns[index]
+    if (pattern === '...' && index === patterns.length - 1) return true
+    if (index >= args.length) return false
+    const arg = args[index]
+    if (typeof pattern !== 'string') return false
+    if (pattern.startsWith('re:') ? !new RegExp(pattern.slice(3), 's').test(arg) : pattern !== arg) return false
+  }
+  return patterns.length === args.length
+}
+
+let clockStart = null
+function elapsedSeconds() {
+  if (clockStart !== null) return nowSeconds - clockStart
+  const clock = process.env.GH_STUB_CLOCK
+  if (!clock) fail('this route changes over time: set GH_STUB_CLOCK to a start-time file path')
+  try {
+    clockStart = Number(fs.readFileSync(clock, 'utf8').trim())
+  } catch {
+    fs.writeFileSync(clock, `${nowSeconds}\n`)
+    clockStart = nowSeconds
+  }
+  if (!Number.isFinite(clockStart)) fail(`${clock} does not hold an epoch time`)
+  return nowSeconds - clockStart
+}
+
+function routeMatches(one) {
+  if (typeof one.joined === 'string') return new RegExp(one.joined, 's').test(args.join(' '))
+  return Array.isArray(one.args) && matches(one.args)
+}
+
+const route = routes.find(routeMatches)
+if (!route) fail(`no route in scenario "${scenario}" for: gh ${args.join(' ')}`)
+
+let answer = route
+let elapsed = null
+if (Array.isArray(route.states)) {
+  elapsed = elapsedSeconds()
+  answer = route.states.find(state => typeof state.before !== 'number' || elapsed < state.before)
+  if (!answer) fail(`no state left at ${elapsed.toFixed(1)}s for: gh ${args.join(' ')}`, elapsed)
+}
+
+/** The value of `--flag value` or `--flag=value`, or null. */
+function flagValue(flag) {
+  for (let index = 0; index < args.length; index += 1) {
+    if (args[index] === flag) return args[index + 1] ?? ''
+    if (args[index].startsWith(`${flag}=`)) return args[index].slice(flag.length + 1)
+  }
+  return null
+}
+
+/** A JSON fixture served the way gh serves `--json a,b`. */
+function jsonAnswer(file, exitCode) {
+  if (flagValue('--jq') !== null || flagValue('--template') !== null || flagValue('-q') !== null || flagValue('-t') !== null) {
+    fail(`--jq and --template are not supported for: gh ${args.join(' ')}`, elapsed)
+  }
+  let rows
+  try {
+    rows = JSON.parse(fs.readFileSync(path.join(scenarioDir, file), 'utf8'))
+  } catch (error) {
+    fail(`unreadable fixture ${scenario}/${file}: ${error.message}`, elapsed)
+  }
+  const list = Array.isArray(rows) ? rows : [rows]
+  const available = Object.keys(list[0] ?? {}).sort()
+  const asked = (flagValue('--json') ?? '').split(',').map(one => one.trim()).filter(Boolean)
+  if (asked.length === 0) {
+    return { stdout: '', stderr: `Specify one or more comma-separated fields for \`--json\`:\n  ${available.join('\n  ')}\n`, exitCode: 1 }
+  }
+  const unknown = asked.find(one => !available.includes(one))
+  if (unknown !== undefined) {
+    return { stdout: '', stderr: `Unknown JSON field: "${unknown}"\nAvailable fields:\n  ${available.join('\n  ')}\n`, exitCode: 1 }
+  }
+  const pick = row => Object.fromEntries(available.filter(one => asked.includes(one)).map(one => [one, row[one]]))
+  const out = Array.isArray(rows) ? list.map(pick) : pick(list[0])
+  return { stdout: `${JSON.stringify(out, null, 2)}\n`, stderr: '', exitCode }
+}
+
+let stdout = answer.stdout ?? ''
+if (typeof answer.file === 'string') {
+  try {
+    stdout = fs.readFileSync(path.join(scenarioDir, answer.file), 'utf8')
+  } catch (error) {
+    fail(`missing fixture ${scenario}/${answer.file}: ${error.message}`, elapsed)
+  }
+}
+let exitCode = Number.isInteger(answer.exitCode) ? answer.exitCode : 0
+let stderr = answer.stderr || ''
+if (typeof answer.jsonFile === 'string') {
+  ;({ stdout, stderr, exitCode } = jsonAnswer(answer.jsonFile, exitCode))
+}
+log(elapsed, exitCode)
+process.stdout.write(stdout)
+if (stderr) process.stderr.write(stderr)
+process.exitCode = exitCode

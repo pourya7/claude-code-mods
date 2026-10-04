@@ -21,7 +21,7 @@ unset CLAUDECODE CLAUDE_PID CLAUDE_EFFORT CLAUDE_PLUGIN_DATA CLAUDE_PLUGIN_ROOT 
   CLAUDE_CODE_OAUTH_SCOPES
 
 if [ "$#" -gt 0 ]; then names="$*"; else
-  names=$(for f in demos/tapes/*.tape; do basename "$f" .tape; done)
+  names=$(for f in demos/tapes/*.tape; do n=$(basename "$f" .tape); [ "$n" = common ] || echo "$n"; done)
 fi
 
 status=0

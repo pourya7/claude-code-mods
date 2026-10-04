@@ -1,0 +1,4 @@
+[
+  {"bucket":"fail","completedAt":"2026-01-05T10:00:41Z","description":"","event":"pull_request","link":"https://github.com/demo/cart/actions/runs/4821/job/9002","name":"test (node 24)","startedAt":"2026-01-05T10:00:02Z","state":"FAILURE","workflow":"ci"},
+  {"bucket":"pass","completedAt":"2026-01-05T10:00:14Z","description":"","event":"pull_request","link":"https://github.com/demo/cart/actions/runs/4821/job/9001","name":"lint","startedAt":"2026-01-05T10:00:02Z","state":"SUCCESS","workflow":"ci"}
+]
