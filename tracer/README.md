@@ -3,6 +3,8 @@
  █  █▀▄ █▀█ █▄▄ ██▄ █▀▄   ★ COURSE CLEAR!
 ```
 
+![/trace 12 follows a merged PR from MERGED through BUILD to DEPLOY:PRODUCTION on the level map, then wakes the session once](../assets/tracer.gif)
+
 # tracer — merged is not deployed
 
 **The problem:** a PR merges, the session moves on, and an hour later someone asks why the change is not there. The merge was only the first stage: the build on the merge commit, each deploy and the rollout still had to happen, and one of them failed or never ran. The study behind this library found "merged but I still can't see it" in **34 prompts across 14 sessions**.

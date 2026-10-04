@@ -1,0 +1,13 @@
+{
+  "description": "tracer demo: PR #12 in demo/cart is merged as 3f9c2e1b84d07a6c5e9f12a3b4c5d6e7f8091a2b. For the first 3 s after the first gh call, workflow runs CI (in progress) and Docker image (queued) are not done and there is no deployment. From 3 s both runs have passed and a production deployment (7301) is in progress. From 13 s it has succeeded. These are exactly the gh calls tracer makes for /trace 12.",
+  "routes": [
+    { "args": ["repo", "view", "--json", "nameWithOwner", "--jq", ".nameWithOwner"], "stdout": "demo/cart\n" },
+    { "args": ["pr", "view", "12", "--repo", "demo/cart", "--json", "number,title,state,mergeCommit"], "jsonFile": "pr-12.json" },
+    { "args": ["api", "repos/demo/cart/actions/runs?head_sha=3f9c2e1b84d07a6c5e9f12a3b4c5d6e7f8091a2b&per_page=100"],
+      "states": [ { "before": 3, "file": "runs-running.json" }, { "file": "runs-passed.json" } ] },
+    { "args": ["api", "repos/demo/cart/deployments?sha=3f9c2e1b84d07a6c5e9f12a3b4c5d6e7f8091a2b&per_page=100"],
+      "states": [ { "before": 3, "stdout": "[]\n" }, { "file": "deployments.json" } ] },
+    { "args": ["api", "repos/demo/cart/deployments/7301/statuses?per_page=1"],
+      "states": [ { "before": 13, "file": "status-in-progress.json" }, { "file": "status-success.json" } ] }
+  ]
+}
