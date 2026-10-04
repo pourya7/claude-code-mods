@@ -7,6 +7,8 @@
                                       ▄▄▀▄▄▄▄▄▄▀▄▄
 ```
 
+![sentry watching PR #12: a sleep-poll the model tries is denied, then CI fails, the status line flips to CIX and sentry wakes the session, which reads the failed log and fixes the bug](../assets/sentry.gif)
+
 # sentry — wait outside the model
 
 **The model does the waiting.** Across 242 studied sessions there were ~1.8k poll loops, ~1.5k `sleep`s and ~1.2k CI-status calls, plus false-greens read right after a push. sentry watches your PRs on a timer with `gh`, never starts a model turn just to poll, and wakes the session only when something actionable happens.

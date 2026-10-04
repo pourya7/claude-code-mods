@@ -1,0 +1,16 @@
+lint	Run npm run lint	0 problems
+test (node 24)	Run npm test	> cart@1.0.0 test
+test (node 24)	Run npm test	> node --test
+test (node 24)	Run npm test	✔ subtotal adds price times quantity (0.5ms)
+test (node 24)	Run npm test	✖ applyDiscount takes a percentage off (0.3ms)
+test (node 24)	Run npm test	✔ total applies the discount to the subtotal (0.1ms)
+test (node 24)	Run npm test	ℹ tests 3
+test (node 24)	Run npm test	ℹ pass 2
+test (node 24)	Run npm test	ℹ fail 1
+test (node 24)	Run npm test	✖ failing tests:
+test (node 24)	Run npm test	test at test/cart.test.js:14:1
+test (node 24)	Run npm test	✖ applyDiscount takes a percentage off (0.3ms)
+test (node 24)	Run npm test	  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+test (node 24)	Run npm test	  70 !== 630
+test (node 24)	Run npm test	      at TestContext.<anonymous> (test/cart.test.js:15:10)
+test (node 24)	Run npm test	##[error]Process completed with exit code 1.

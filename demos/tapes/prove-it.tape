@@ -47,9 +47,13 @@ Sleep 6s
 Show
 
 Sleep 1s
-Set TypingSpeed 80ms
+# Type the command off camera: a partial "/pr" lists every installed
+# command, including the recorder's own.
+Hide
 Type "/prove"
 Sleep 800ms
+Show
+Sleep 600ms
 Enter
 Sleep 7s
 

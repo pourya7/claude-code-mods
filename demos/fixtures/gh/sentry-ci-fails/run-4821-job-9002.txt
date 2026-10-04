@@ -1,0 +1,17 @@
+X Simplify applyDiscount ci · 4821
+Triggered via pull_request about 1 minute ago
+
+X test (node 24) in 39s (ID 9002)
+  ✓ Set up job
+  ✓ Run actions/checkout@v4
+  ✓ Run actions/setup-node@v4
+  X Run npm test
+  - Complete job
+
+ANNOTATIONS
+X Process completed with exit code 1.
+test (node 24): .github#1
+
+
+To see the logs for the failed steps, try: gh run view --log-failed --job=9002
+View this run on GitHub: https://github.com/demo/cart/actions/runs/4821

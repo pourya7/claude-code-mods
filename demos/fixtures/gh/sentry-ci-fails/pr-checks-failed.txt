@@ -1,0 +1,2 @@
+test (node 24)	fail	39s	https://github.com/demo/cart/actions/runs/4821/job/9002	
+lint	pass	12s	https://github.com/demo/cart/actions/runs/4821/job/9001	
