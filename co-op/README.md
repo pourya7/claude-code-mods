@@ -3,6 +3,8 @@
 █▄▄ █▄█    █▄█ █▀▀   2P REVIEW
 ```
 
+![co-op denies gh pr create after a second model finds a flipped discount sign, then the 2P REVIEW pane lists the finding](../assets/co-op.gif)
+
 # co-op — a second player reviews before the PR
 
 **The problem:** one agent's word isn't enough. Before opening a pull request you want a second model to read the diff, so you paste it into another tool or script a reviewer by hand, every time. The study behind this library counted **~1,600 second-model review runs typed or scripted by hand before PRs**.
